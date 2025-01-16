@@ -21,19 +21,30 @@ const bit<48> bias_mac_source = 0x00000001;
 const bit<48> weight_mac_dest = 0x12345678;
 const bit<48> bias_mac_dest = 0x00000001;
 
+const bit<16> ETHERTYPE_PTP  = 0x88F7;
+
+header ptp_t {
+    bit<4>   transport_specifics;
+    bit<4>   message_type;
+    bit<4>   reserved1;
+    bit<4>   version;
+    bit<16>  message_legth;
+    bit<8>   domain_number;
+    bit<8>   reserved2;
+    bit<16>  flagfiled;
+    bit<64>  correction_field;
+    bit<32>  reserved3;
+    bit<80>  source_port_identity;
+    bit<16>  sequence_id;
+    bit<8>   control_field;
+    bit<8>   log_message_interval;
+}
+
 header p4calc_t {
     bit<8> p;
     bit<8> four;
     bit<8> ver;
     // Input features(6 features)
-    bit<48> mac_source;
-    bit<48> mac_dest;
-    bit<16> msg_len;
-    bit<16> seq_id;
-    bit<4>  msg_type;
-    bit<8>  inter_arrival_time;
-
-    bit<4> zero;
 
     bit<32> s1_replication;
     bit<32> s4_replication;
@@ -143,26 +154,12 @@ header s1_output0_calc_t {
 }
 
 header s7_output0_calc_t {
-    bit<32> s7_output_0_0;
-    bit<32> s7_output_0_1;
-    bit<32> s7_output_1_0;
-    bit<32> s7_output_1_1;
-    bit<32> s7_output_2_0;
-    bit<32> s7_output_2_1;
-    bit<32> s7_output_3_0;
-    bit<32> s7_output_3_1;
-    bit<32> s7_output_4_0;
-    bit<32> s7_output_4_1;
-    bit<32> s7_output_5_0;
-    bit<32> s7_output_5_1;
-    bit<32> s7_output_6_0;
-    bit<32> s7_output_6_1;
-    bit<32> s7_output_7_0;
-    bit<32> s7_output_7_1;
+    bit<32> s7_output;
 }
 
 struct headers {
     ethernet_t   ethernet;
+    ptp_t       ptp;
     p4calc_t     p4calc;
     s0_output0_calc_t s0_output0_calc;
     s1_output0_calc_t s1_output0_calc;
@@ -186,9 +183,15 @@ parser MyParser(packet_in packet,
     state start {
         packet.extract(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {
+            ETHERTYPE_PTP : parse_ptp;
             P4CALC_ETYPE : check_p4calc;
             default      : accept;
         }
+    }
+
+    state parse_ptp {
+        packet.extract(hdr.ptp);
+        transition check_p4calc;
     }
 
     state check_p4calc {
@@ -239,13 +242,15 @@ control MyIngress(inout headers hdr,
     register<bit<32>>(1) seq_len;
     register<bit<32>>(1) msg_index;
     // 读取输入，把不同的输入通过技巧放入我们的32位定点数里面
+    // 关于这里定点数，选择采用Q24.8的形式，相当于对对应的value乘以256（左移8位），再用补码表示
+    // 这样相当于后8位表示小数部分，前24位表示整数部分，虽有精度损失，但是在可接受范围里面
     action read_input(){     
         bit<32> seq_len_num;
         seq_len.read(seq_len_num , 0);
         bit<32> seq_num = seq_len_num * 6;
 
         //处理mac_source
-        bit<48> transformed_mac_source = hdr.p4calc.mac_source * weight_mac_source + bias_mac_source;
+        bit<48> transformed_mac_source = hdr.ethernet.srcAddr * weight_mac_source + bias_mac_source;
         bit<24> transformed_mac_source_low_24bits = transformed_mac_source[23:0];  // 取低 24 位
         bit<32> result_mac_source_32bits = 0;
         result_mac_source_32bits[31:8] = transformed_mac_source_low_24bits;
@@ -253,38 +258,38 @@ control MyIngress(inout headers hdr,
         input_data.write(seq_num, result_mac_source_32bits);
 
         //处理mac_dest
-        bit<48> transformed_mac_dest = hdr.p4calc.mac_dest * weight_mac_dest + bias_mac_dest;
+        bit<48> transformed_mac_dest = hdr.ethernet.dstAddr * weight_mac_dest + bias_mac_dest;
         bit<24> transformed_mac_dest_low_24bits = transformed_mac_dest[23:0];  
         bit<32> result_mac_dest_32bits = 0;
         result_mac_dest_32bits[31:8] = transformed_mac_dest_low_24bits;  
         result_mac_dest_32bits[7:0] = 0;
         input_data.write(seq_num + 1, result_mac_dest_32bits);
 
-        //处理msg_len
+        //处理message_legth
         bit<32> result_msg_len_32bits = 0;
         result_msg_len_32bits[31:24] = 0;
-        result_msg_len_32bits[23:8] = hdr.p4calc.msg_len;
+        result_msg_len_32bits[23:8] = hdr.ptp.message_legth;
         result_msg_len_32bits[7:0] = 0;
         input_data.write(seq_num + 2, result_msg_len_32bits);
 
-        //处理seq_id
+        //处理sequence_id
         bit<32> result_seq_id_32bits = 0;
         result_seq_id_32bits[31:24] = 0;
-        result_seq_id_32bits[23:8] = hdr.p4calc.seq_id;
+        result_seq_id_32bits[23:8] = hdr.ptp.sequence_id;
         result_seq_id_32bits[7:0] = 0;
         input_data.write(seq_num + 3, result_seq_id_32bits);
 
-        //处理msg_type
+        //处理message_type
         bit<32> result_msg_type_32bits = 0;
         result_msg_type_32bits[31:12] = 0;
-        result_msg_type_32bits[11:8] = hdr.p4calc.msg_type ;
+        result_msg_type_32bits[11:8] = hdr.ptp.message_type ;
         result_msg_type_32bits[7:0] = 0;
         input_data.write(seq_num + 4, result_msg_type_32bits);
 
         //处理inter-arrival_time
         bit<32> result_inter_arrival_time_32bits = 0;
         result_inter_arrival_time_32bits[31:16] = 0;
-        result_inter_arrival_time_32bits[15:8] = hdr.p4calc.inter_arrival_time;
+        result_inter_arrival_time_32bits[15:8] = hdr.ptp.log_message_interval;
         result_inter_arrival_time_32bits[7:0] = 0;
         input_data.write(seq_num + 5, result_inter_arrival_time_32bits);
 
@@ -425,6 +430,7 @@ control MyComputeChecksum(inout headers hdr, inout metadata meta) {
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
         packet.emit(hdr.ethernet);
+        packet.emit(hdr.ptp);
         packet.emit(hdr.p4calc);
         packet.emit(hdr.s0_output0_calc);
         packet.emit(hdr.s1_output0_calc);

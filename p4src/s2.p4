@@ -16,19 +16,30 @@ const bit<8>  P4CALC_P     = 0x50;   // 'P'
 const bit<8>  P4CALC_4     = 0x34;   // '4'
 const bit<8>  P4CALC_VER   = 0x01;   // v0.1
 
+const bit<16> ETHERTYPE_PTP  = 0x88F7;
+
+header ptp_t {
+    bit<4>   transport_specifics;
+    bit<4>   message_type;
+    bit<4>   reserved1;
+    bit<4>   version;
+    bit<16>  message_legth;
+    bit<8>   domain_number;
+    bit<8>   reserved2;
+    bit<16>  flagfiled;
+    bit<64>  correction_field;
+    bit<32>  reserved3;
+    bit<80>  source_port_identity;
+    bit<16>  sequence_id;
+    bit<8>   control_field;
+    bit<8>   log_message_interval;
+}
+
 header p4calc_t {
     bit<8> p;
     bit<8> four;
     bit<8> ver;
     // Input features(6 features)
-    bit<48> mac_source;
-    bit<48> mac_dest;
-    bit<16> msg_len;
-    bit<16> seq_id;
-    bit<4>  msg_type;
-    bit<8>  inter_arrival_time;
-
-    bit<4> zero;
 
     bit<32> s1_replication;
     bit<32> s4_replication;
@@ -138,26 +149,12 @@ header s1_output0_calc_t {
 }
 
 header s7_output0_calc_t {
-    bit<32> s7_output_0_0;
-    bit<32> s7_output_0_1;
-    bit<32> s7_output_1_0;
-    bit<32> s7_output_1_1;
-    bit<32> s7_output_2_0;
-    bit<32> s7_output_2_1;
-    bit<32> s7_output_3_0;
-    bit<32> s7_output_3_1;
-    bit<32> s7_output_4_0;
-    bit<32> s7_output_4_1;
-    bit<32> s7_output_5_0;
-    bit<32> s7_output_5_1;
-    bit<32> s7_output_6_0;
-    bit<32> s7_output_6_1;
-    bit<32> s7_output_7_0;
-    bit<32> s7_output_7_1;
+    bit<32> s7_output;
 }
 
 struct headers {
     ethernet_t   ethernet;
+    ptp_t       ptp;
     p4calc_t     p4calc;
     s0_output0_calc_t s0_output0_calc;
     s1_output0_calc_t s1_output0_calc;
@@ -181,9 +178,15 @@ parser MyParser(packet_in packet,
     state start {
         packet.extract(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {
+            ETHERTYPE_PTP : parse_ptp;
             P4CALC_ETYPE : check_p4calc;
             default      : accept;
         }
+    }
+
+    state parse_ptp {
+        packet.extract(hdr.ptp);
+        transition check_p4calc;
     }
 
     state check_p4calc {
@@ -204,6 +207,7 @@ parser MyParser(packet_in packet,
         packet.extract(hdr.s0_output0_calc);
         transition parse_s1_output0_calc;
     }
+
     state parse_s1_output0_calc {
         packet.extract(hdr.s1_output0_calc);
         transition parse_s7_output0_calc;
@@ -214,7 +218,6 @@ parser MyParser(packet_in packet,
         transition accept;
     }
 }
-
 /*************************************************************************
  ************   C H E C K S U M    V E R I F I C A T I O N   *************
  *************************************************************************/
@@ -856,6 +859,7 @@ control MyComputeChecksum(inout headers hdr, inout metadata meta) {
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
         packet.emit(hdr.ethernet);
+        packet.emit(hdr.ptp);
         packet.emit(hdr.p4calc);
         packet.emit(hdr.s0_output0_calc);
         packet.emit(hdr.s1_output0_calc);

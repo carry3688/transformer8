@@ -12,18 +12,28 @@ from struct import pack
 class P4calc(Packet):
     name = "P4calc"
     fields_desc = [
+        # ptp input
+        
+        BitField("transport_specifics", 0 ,4),
+        BitField("message_type", 0 ,4),
+        BitField("reserved1", 0 ,4),
+        BitField("version", 0 ,4),
+        BitField("message_legth", 0 ,16),
+        BitField("domain_number", 0 ,8),
+        BitField("reserved2", 0 ,8),
+        BitField("flagfiled", 0 ,16),
+        BitField("correction_field", 0 ,64),
+        BitField("reserved3", 0 ,32),
+        BitField("source_port_identity", 0 ,80),
+        BitField("sequence_id", 0 ,16),
+        BitField("control_field", 0 ,8),
+        BitField("log_message_interval", 0 ,8),
+
         StrFixedLenField("p", "P", length=1),
         StrFixedLenField("four", "4", length=1), 
         XByteField("ver", 0x01), 
-
+        
         # h1 input
-        BitField("mac_source", 0, 48),
-        BitField("mac_dest", 0, 48),
-        BitField("msg_len", 0, 16),
-        BitField("seq_id", 0, 16),
-        BitField("msg_type", 0, 4),
-        BitField("inter_arrival_time", 0, 8),
-        BitField("zero", 0, 4),
         BitField("s1_replication", 0, 32),
         BitField("s4_replication", 0, 32),
         BitField("msg_index", 0, 32),
@@ -126,22 +136,7 @@ class P4calc(Packet):
         BitField("s1_output_7_3", 0, 32),
         BitField("s1_output_7_4", 0, 32),
         BitField("s1_output_7_5", 0, 32),
-        BitField("s7_output_0_0", 0, 32),
-        BitField("s7_output_0_1", 0, 32),
-        BitField("s7_output_1_0", 0, 32),
-        BitField("s7_output_1_1", 0, 32),
-        BitField("s7_output_2_0", 0, 32),
-        BitField("s7_output_2_1", 0, 32),
-        BitField("s7_output_3_0", 0, 32),
-        BitField("s7_output_3_1", 0, 32),
-        BitField("s7_output_4_0", 0, 32),
-        BitField("s7_output_4_1", 0, 32),
-        BitField("s7_output_5_0", 0, 32),
-        BitField("s7_output_5_1", 0, 32),
-        BitField("s7_output_6_0", 0, 32),
-        BitField("s7_output_6_1", 0, 32),
-        BitField("s7_output_7_0", 0, 32),
-        BitField("s7_output_7_1", 0, 32),
+        BitField("s7_output", 0, 32),
     ]
 
 def get_if():
@@ -155,6 +150,7 @@ def get_if():
         exit(1)
     return iface
 
+
 def main():
     mac_addresses = [
         0x112233445566, 0x223344556677, 0x334455667788,
@@ -165,8 +161,8 @@ def main():
 
     msg_lens = [1024, 2048, 4096, 8192, 16384]
     seq_ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-    msg_types = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]  # 半字节
-    inter_arrival_times = [50, 100, 150, 200, 250]
+    msg_types = [4, 5, 6, 7, 14, 15]  # 半字节
+    inter_arrival_times = [5, 10, 15, 20, 25]
 
     iface = get_if()
 
@@ -190,17 +186,18 @@ def main():
 
         inter_arrival_time_be = int.from_bytes(pack(">B", inter_arrival_time), "big")  # 间隔时间是 1 字节
 
+        mac_dest_str = f"{mac_dest:012x}"
+        dst_mac_bytes = ":".join(mac_dest_str[i:i+2] for i in range(0, len(mac_dest_str), 2))
+
+        p4calc_length = 437
         # 构造数据包
         pkt = Ether(
-            src=get_if_hwaddr(iface), dst="ff:ff:ff:ff:ff:ff", type=0x1234
+            src=get_if_hwaddr(iface), dst=dst_mac_bytes, type=0x88F7
         ) / P4calc(
-            mac_source=mac_source_be,
-            mac_dest=mac_dest_be,
-            msg_len=msg_len_be,
-            seq_id=seq_id_be,
-            msg_type=msg_type_be,
-            inter_arrival_time=inter_arrival_time_be,
-            zero=zero,
+            message_legth=p4calc_length,
+            sequence_id=seq_id_be,
+            message_type=msg_type_be,
+            log_message_interval=inter_arrival_time_be,
         )
 
         sendp(pkt, iface=iface, verbose=False)
