@@ -2069,7 +2069,7 @@ control MyIngress(inout headers hdr,
         meta.result_0_31 = (hash_value > probability) ? meta.result_0_31 : zero;
     }
 
-    // (1*32) * (32*1) = (1*1)，这里未实现的是sigmoid激活函数
+    // (1*32) * (32*1) = (1*1)，这里实现的是sigmoid激活函数，也用泰勒公式展开
     action operation_linear2() {
         bit<64> result_0_0 = (bit<64>) meta.result_0_0 | (((meta.result_0_0 & 0x80000000) != 0) ? 64w0xFFFFFFFF00000000 : 0);
         bit<64> result_0_1 = (bit<64>) meta.result_0_1 | (((meta.result_0_1 & 0x80000000) != 0) ? 64w0xFFFFFFFF00000000 : 0);
@@ -2104,7 +2104,16 @@ control MyIngress(inout headers hdr,
         bit<64> result_0_30 = (bit<64>) meta.result_0_30 | (((meta.result_0_30 & 0x80000000) != 0) ? 64w0xFFFFFFFF00000000 : 0);
         bit<64> result_0_31 = (bit<64>) meta.result_0_31 | (((meta.result_0_31 & 0x80000000) != 0) ? 64w0xFFFFFFFF00000000 : 0);
 
-        hdr.s7_output0_calc.s7_output = (result_0_0 * w2_0_0 + result_0_1 * w2_1_0 + result_0_2 * w2_2_0 + result_0_3 * w2_3_0 + result_0_4 * w2_4_0 + result_0_5 * w2_5_0 + result_0_6 * w2_6_0 + result_0_7 * w2_7_0 + result_0_8 * w2_8_0 + result_0_9 * w2_9_0 + result_0_10 * w2_10_0 + result_0_11 * w2_11_0 + result_0_12 * w2_12_0 + result_0_13 * w2_13_0 + result_0_14 * w2_14_0 + result_0_15 * w2_15_0 + result_0_16 * w2_16_0 + result_0_17 * w2_17_0 + result_0_18 * w2_18_0 + result_0_19 * w2_19_0 + result_0_20 * w2_20_0 + result_0_21 * w2_21_0 + result_0_22 * w2_22_0 + result_0_23 * w2_23_0 + result_0_24 * w2_24_0 + result_0_25 * w2_25_0 + result_0_26 * w2_26_0 + result_0_27 * w2_27_0 + result_0_28 * w2_28_0 + result_0_29 * w2_29_0 + result_0_30 * w2_30_0 + result_0_31 * w2_31_0)[39:8] + b_reduce;
+        bit<32> result32 = (result_0_0 * w2_0_0 + result_0_1 * w2_1_0 + result_0_2 * w2_2_0 + result_0_3 * w2_3_0 + result_0_4 * w2_4_0 + result_0_5 * w2_5_0 + result_0_6 * w2_6_0 + result_0_7 * w2_7_0 + result_0_8 * w2_8_0 + result_0_9 * w2_9_0 + result_0_10 * w2_10_0 + result_0_11 * w2_11_0 + result_0_12 * w2_12_0 + result_0_13 * w2_13_0 + result_0_14 * w2_14_0 + result_0_15 * w2_15_0 + result_0_16 * w2_16_0 + result_0_17 * w2_17_0 + result_0_18 * w2_18_0 + result_0_19 * w2_19_0 + result_0_20 * w2_20_0 + result_0_21 * w2_21_0 + result_0_22 * w2_22_0 + result_0_23 * w2_23_0 + result_0_24 * w2_24_0 + result_0_25 * w2_25_0 + result_0_26 * w2_26_0 + result_0_27 * w2_27_0 + result_0_28 * w2_28_0 + result_0_29 * w2_29_0 + result_0_30 * w2_30_0 + result_0_31 * w2_31_0)[39:8] + b_reduce;
+        bit<64> result64 = (bit<64>) result32 | (((result32 & 0x80000000) != 0) ? 64w0xFFFFFFFF00000000 : 0);
+        const bit<32> float_1_2 = 0x00000080;
+        const bit<64> float_1_4 = 0x0000000000000040;
+        const bit<64> float_1_48 = 0x0000000000000005;
+        bit<32> result_linear = (float_1_4 * result64)[39:8];
+        bit<32> result_cube = (float_1_48 * result64 * result64 * result64)[63:32];
+
+        hdr.s7_output0_calc.s7_output = float_1_2 + result_linear + result_cube;
+
     }
     
 
