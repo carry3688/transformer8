@@ -47,109 +47,110 @@ header p4calc_t {
 }
 
 header s0_output0_calc_t {
-    bit<32> s0_output_0_0;
-    bit<32> s0_output_0_1;
-    bit<32> s0_output_0_2;
-    bit<32> s0_output_0_3;
-    bit<32> s0_output_0_4;
-    bit<32> s0_output_0_5;
-    bit<32> s0_output_1_0;
-    bit<32> s0_output_1_1;
-    bit<32> s0_output_1_2;
-    bit<32> s0_output_1_3;
-    bit<32> s0_output_1_4;
-    bit<32> s0_output_1_5;
-    bit<32> s0_output_2_0;
-    bit<32> s0_output_2_1;
-    bit<32> s0_output_2_2;
-    bit<32> s0_output_2_3;
-    bit<32> s0_output_2_4;
-    bit<32> s0_output_2_5;
-    bit<32> s0_output_3_0;
-    bit<32> s0_output_3_1;
-    bit<32> s0_output_3_2;
-    bit<32> s0_output_3_3;
-    bit<32> s0_output_3_4;
-    bit<32> s0_output_3_5;
-    bit<32> s0_output_4_0;
-    bit<32> s0_output_4_1;
-    bit<32> s0_output_4_2;
-    bit<32> s0_output_4_3;
-    bit<32> s0_output_4_4;
-    bit<32> s0_output_4_5;
-    bit<32> s0_output_5_0;
-    bit<32> s0_output_5_1;
-    bit<32> s0_output_5_2;
-    bit<32> s0_output_5_3;
-    bit<32> s0_output_5_4;
-    bit<32> s0_output_5_5;
-    bit<32> s0_output_6_0;
-    bit<32> s0_output_6_1;
-    bit<32> s0_output_6_2;
-    bit<32> s0_output_6_3;
-    bit<32> s0_output_6_4;
-    bit<32> s0_output_6_5;
-    bit<32> s0_output_7_0;
-    bit<32> s0_output_7_1;
-    bit<32> s0_output_7_2;
-    bit<32> s0_output_7_3;
-    bit<32> s0_output_7_4;
-    bit<32> s0_output_7_5;
+    bit<16> s0_output_0_0;
+    bit<16> s0_output_0_1;
+    bit<16> s0_output_0_2;
+    bit<16> s0_output_0_3;
+    bit<16> s0_output_0_4;
+    bit<16> s0_output_0_5;
+    bit<16> s0_output_1_0;
+    bit<16> s0_output_1_1;
+    bit<16> s0_output_1_2;
+    bit<16> s0_output_1_3;
+    bit<16> s0_output_1_4;
+    bit<16> s0_output_1_5;
+    bit<16> s0_output_2_0;
+    bit<16> s0_output_2_1;
+    bit<16> s0_output_2_2;
+    bit<16> s0_output_2_3;
+    bit<16> s0_output_2_4;
+    bit<16> s0_output_2_5;
+    bit<16> s0_output_3_0;
+    bit<16> s0_output_3_1;
+    bit<16> s0_output_3_2;
+    bit<16> s0_output_3_3;
+    bit<16> s0_output_3_4;
+    bit<16> s0_output_3_5;
+    bit<16> s0_output_4_0;
+    bit<16> s0_output_4_1;
+    bit<16> s0_output_4_2;
+    bit<16> s0_output_4_3;
+    bit<16> s0_output_4_4;
+    bit<16> s0_output_4_5;
+    bit<16> s0_output_5_0;
+    bit<16> s0_output_5_1;
+    bit<16> s0_output_5_2;
+    bit<16> s0_output_5_3;
+    bit<16> s0_output_5_4;
+    bit<16> s0_output_5_5;
+    bit<16> s0_output_6_0;
+    bit<16> s0_output_6_1;
+    bit<16> s0_output_6_2;
+    bit<16> s0_output_6_3;
+    bit<16> s0_output_6_4;
+    bit<16> s0_output_6_5;
+    bit<16> s0_output_7_0;
+    bit<16> s0_output_7_1;
+    bit<16> s0_output_7_2;
+    bit<16> s0_output_7_3;
+    bit<16> s0_output_7_4;
+    bit<16> s0_output_7_5;
 }
 
 header s1_output0_calc_t {
-    bit<32> s1_output_0_0;
-    bit<32> s1_output_0_1;
-    bit<32> s1_output_0_2;
-    bit<32> s1_output_0_3;
-    bit<32> s1_output_0_4;
-    bit<32> s1_output_0_5;
-    bit<32> s1_output_1_0;
-    bit<32> s1_output_1_1;
-    bit<32> s1_output_1_2;
-    bit<32> s1_output_1_3;
-    bit<32> s1_output_1_4;
-    bit<32> s1_output_1_5;
-    bit<32> s1_output_2_0;
-    bit<32> s1_output_2_1;
-    bit<32> s1_output_2_2;
-    bit<32> s1_output_2_3;
-    bit<32> s1_output_2_4;
-    bit<32> s1_output_2_5;
-    bit<32> s1_output_3_0;
-    bit<32> s1_output_3_1;
-    bit<32> s1_output_3_2;
-    bit<32> s1_output_3_3;
-    bit<32> s1_output_3_4;
-    bit<32> s1_output_3_5;
-    bit<32> s1_output_4_0;
-    bit<32> s1_output_4_1;
-    bit<32> s1_output_4_2;
-    bit<32> s1_output_4_3;
-    bit<32> s1_output_4_4;
-    bit<32> s1_output_4_5;
-    bit<32> s1_output_5_0;
-    bit<32> s1_output_5_1;
-    bit<32> s1_output_5_2;
-    bit<32> s1_output_5_3;
-    bit<32> s1_output_5_4;
-    bit<32> s1_output_5_5;
-    bit<32> s1_output_6_0;
-    bit<32> s1_output_6_1;
-    bit<32> s1_output_6_2;
-    bit<32> s1_output_6_3;
-    bit<32> s1_output_6_4;
-    bit<32> s1_output_6_5;
-    bit<32> s1_output_7_0;
-    bit<32> s1_output_7_1;
-    bit<32> s1_output_7_2;
-    bit<32> s1_output_7_3;
-    bit<32> s1_output_7_4;
-    bit<32> s1_output_7_5;
+    bit<16> s1_output_0_0;
+    bit<16> s1_output_0_1;
+    bit<16> s1_output_0_2;
+    bit<16> s1_output_0_3;
+    bit<16> s1_output_0_4;
+    bit<16> s1_output_0_5;
+    bit<16> s1_output_1_0;
+    bit<16> s1_output_1_1;
+    bit<16> s1_output_1_2;
+    bit<16> s1_output_1_3;
+    bit<16> s1_output_1_4;
+    bit<16> s1_output_1_5;
+    bit<16> s1_output_2_0;
+    bit<16> s1_output_2_1;
+    bit<16> s1_output_2_2;
+    bit<16> s1_output_2_3;
+    bit<16> s1_output_2_4;
+    bit<16> s1_output_2_5;
+    bit<16> s1_output_3_0;
+    bit<16> s1_output_3_1;
+    bit<16> s1_output_3_2;
+    bit<16> s1_output_3_3;
+    bit<16> s1_output_3_4;
+    bit<16> s1_output_3_5;
+    bit<16> s1_output_4_0;
+    bit<16> s1_output_4_1;
+    bit<16> s1_output_4_2;
+    bit<16> s1_output_4_3;
+    bit<16> s1_output_4_4;
+    bit<16> s1_output_4_5;
+    bit<16> s1_output_5_0;
+    bit<16> s1_output_5_1;
+    bit<16> s1_output_5_2;
+    bit<16> s1_output_5_3;
+    bit<16> s1_output_5_4;
+    bit<16> s1_output_5_5;
+    bit<16> s1_output_6_0;
+    bit<16> s1_output_6_1;
+    bit<16> s1_output_6_2;
+    bit<16> s1_output_6_3;
+    bit<16> s1_output_6_4;
+    bit<16> s1_output_6_5;
+    bit<16> s1_output_7_0;
+    bit<16> s1_output_7_1;
+    bit<16> s1_output_7_2;
+    bit<16> s1_output_7_3;
+    bit<16> s1_output_7_4;
+    bit<16> s1_output_7_5;
 }
 
 header s7_output0_calc_t {
-    bit<32> s7_output;
+    bit<16> s7_before_sigmoid;
+    bit<16> s7_output;
 }
 
 struct headers {
@@ -233,11 +234,11 @@ control MyIngress(inout headers hdr,
                   inout metadata meta,
                   inout standard_metadata_t standard_metadata) {
     // 存储s1_output，以等待第二个到达和他组成一组输出
-    register<bit<32>> (192) s1_ouput_store;
+    register<bit<16>> (192) s1_ouput_store;
     // msg_index为0到3的到达了几个
     register<bit<32>> (4) is_s1_output_store;
 
-      // 丢弃
+    // 丢弃
     action operation_drop() {
         mark_to_drop(standard_metadata);
     }
@@ -324,30 +325,32 @@ control MyIngress(inout headers hdr,
     action operation_send_replication_0(bit<32> input_msg_index) {
         //从index读出之前存的数据
         bit<32> index = input_msg_index * 48 + 24;
-        bit<32> output_0_3;
-        bit<32> output_0_4;
-        bit<32> output_0_5;
-        bit<32> output_1_3;
-        bit<32> output_1_4;
-        bit<32> output_1_5;
-        bit<32> output_2_3;
-        bit<32> output_2_4;
-        bit<32> output_2_5;
-        bit<32> output_3_3;
-        bit<32> output_3_4;
-        bit<32> output_3_5;
-        bit<32> output_4_3;
-        bit<32> output_4_4;
-        bit<32> output_4_5;
-        bit<32> output_5_3;
-        bit<32> output_5_4;
-        bit<32> output_5_5;
-        bit<32> output_6_3;
-        bit<32> output_6_4;
-        bit<32> output_6_5;
-        bit<32> output_7_3;
-        bit<32> output_7_4;
-        bit<32> output_7_5;
+
+        bit<16> output_0_3;
+        bit<16> output_0_4;
+        bit<16> output_0_5;
+        bit<16> output_1_3;
+        bit<16> output_1_4;
+        bit<16> output_1_5;
+        bit<16> output_2_3;
+        bit<16> output_2_4;
+        bit<16> output_2_5;
+        bit<16> output_3_3;
+        bit<16> output_3_4;
+        bit<16> output_3_5;
+        bit<16> output_4_3;
+        bit<16> output_4_4;
+        bit<16> output_4_5;
+        bit<16> output_5_3;
+        bit<16> output_5_4;
+        bit<16> output_5_5;
+        bit<16> output_6_3;
+        bit<16> output_6_4;
+        bit<16> output_6_5;
+        bit<16> output_7_3;
+        bit<16> output_7_4;
+        bit<16> output_7_5;
+
 
         s1_ouput_store.read(output_0_3, index + 0);
         s1_ouput_store.read(output_0_4, index + 1);
@@ -374,30 +377,32 @@ control MyIngress(inout headers hdr,
         s1_ouput_store.read(output_7_4, index + 22);
         s1_ouput_store.read(output_7_5, index + 23);
 
-        bit<32> output_0_0 = hdr.s1_output0_calc.s1_output_0_0;
-        bit<32> output_0_1 = hdr.s1_output0_calc.s1_output_0_1;
-        bit<32> output_0_2 = hdr.s1_output0_calc.s1_output_0_2;
-        bit<32> output_1_0 = hdr.s1_output0_calc.s1_output_1_0;
-        bit<32> output_1_1 = hdr.s1_output0_calc.s1_output_1_1;
-        bit<32> output_1_2 = hdr.s1_output0_calc.s1_output_1_2;
-        bit<32> output_2_0 = hdr.s1_output0_calc.s1_output_2_0;
-        bit<32> output_2_1 = hdr.s1_output0_calc.s1_output_2_1;
-        bit<32> output_2_2 = hdr.s1_output0_calc.s1_output_2_2;
-        bit<32> output_3_0 = hdr.s1_output0_calc.s1_output_3_0;
-        bit<32> output_3_1 = hdr.s1_output0_calc.s1_output_3_1;
-        bit<32> output_3_2 = hdr.s1_output0_calc.s1_output_3_2;
-        bit<32> output_4_0 = hdr.s1_output0_calc.s1_output_4_0;
-        bit<32> output_4_1 = hdr.s1_output0_calc.s1_output_4_1;
-        bit<32> output_4_2 = hdr.s1_output0_calc.s1_output_4_2;
-        bit<32> output_5_0 = hdr.s1_output0_calc.s1_output_5_0;
-        bit<32> output_5_1 = hdr.s1_output0_calc.s1_output_5_1;
-        bit<32> output_5_2 = hdr.s1_output0_calc.s1_output_5_2;
-        bit<32> output_6_0 = hdr.s1_output0_calc.s1_output_6_0;
-        bit<32> output_6_1 = hdr.s1_output0_calc.s1_output_6_1;
-        bit<32> output_6_2 = hdr.s1_output0_calc.s1_output_6_2;
-        bit<32> output_7_0 = hdr.s1_output0_calc.s1_output_7_0;
-        bit<32> output_7_1 = hdr.s1_output0_calc.s1_output_7_1;
-        bit<32> output_7_2 = hdr.s1_output0_calc.s1_output_7_2;
+        bit<16> output_0_0 = hdr.s1_output0_calc.s1_output_0_0;
+        bit<16> output_0_1 = hdr.s1_output0_calc.s1_output_0_1;
+        bit<16> output_0_2 = hdr.s1_output0_calc.s1_output_0_2;
+        bit<16> output_1_0 = hdr.s1_output0_calc.s1_output_1_0;
+        bit<16> output_1_1 = hdr.s1_output0_calc.s1_output_1_1;
+        bit<16> output_1_2 = hdr.s1_output0_calc.s1_output_1_2;
+        bit<16> output_2_0 = hdr.s1_output0_calc.s1_output_2_0;
+        bit<16> output_2_1 = hdr.s1_output0_calc.s1_output_2_1;
+        bit<16> output_2_2 = hdr.s1_output0_calc.s1_output_2_2;
+        bit<16> output_3_0 = hdr.s1_output0_calc.s1_output_3_0;
+        bit<16> output_3_1 = hdr.s1_output0_calc.s1_output_3_1;
+        bit<16> output_3_2 = hdr.s1_output0_calc.s1_output_3_2;
+        bit<16> output_4_0 = hdr.s1_output0_calc.s1_output_4_0;
+        bit<16> output_4_1 = hdr.s1_output0_calc.s1_output_4_1;
+        bit<16> output_4_2 = hdr.s1_output0_calc.s1_output_4_2;
+        bit<16> output_5_0 = hdr.s1_output0_calc.s1_output_5_0;
+        bit<16> output_5_1 = hdr.s1_output0_calc.s1_output_5_1;
+        bit<16> output_5_2 = hdr.s1_output0_calc.s1_output_5_2;
+        bit<16> output_6_0 = hdr.s1_output0_calc.s1_output_6_0;
+        bit<16> output_6_1 = hdr.s1_output0_calc.s1_output_6_1;
+        bit<16> output_6_2 = hdr.s1_output0_calc.s1_output_6_2;
+        bit<16> output_7_0 = hdr.s1_output0_calc.s1_output_7_0;
+        bit<16> output_7_1 = hdr.s1_output0_calc.s1_output_7_1;
+        bit<16> output_7_2 = hdr.s1_output0_calc.s1_output_7_2;
+
+
 
         /*
         hdr.s1_output0_calc.s1_output_0_0 = output_0_0;
@@ -558,30 +563,31 @@ control MyIngress(inout headers hdr,
     action operation_send_replication_1(bit<32> input_msg_index) {
        //从index读出之前存的数据
         bit<32> index = input_msg_index * 48;
-        bit<32> output_0_0;
-        bit<32> output_0_1;
-        bit<32> output_0_2;
-        bit<32> output_1_0;
-        bit<32> output_1_1;
-        bit<32> output_1_2;
-        bit<32> output_2_0;
-        bit<32> output_2_1;
-        bit<32> output_2_2;
-        bit<32> output_3_0;
-        bit<32> output_3_1;
-        bit<32> output_3_2;
-        bit<32> output_4_0;
-        bit<32> output_4_1;
-        bit<32> output_4_2;
-        bit<32> output_5_0;
-        bit<32> output_5_1;
-        bit<32> output_5_2;
-        bit<32> output_6_0;
-        bit<32> output_6_1;
-        bit<32> output_6_2;
-        bit<32> output_7_0;
-        bit<32> output_7_1;
-        bit<32> output_7_2;
+        bit<16> output_0_0;
+        bit<16> output_0_1;
+        bit<16> output_0_2;
+        bit<16> output_1_0;
+        bit<16> output_1_1;
+        bit<16> output_1_2;
+        bit<16> output_2_0;
+        bit<16> output_2_1;
+        bit<16> output_2_2;
+        bit<16> output_3_0;
+        bit<16> output_3_1;
+        bit<16> output_3_2;
+        bit<16> output_4_0;
+        bit<16> output_4_1;
+        bit<16> output_4_2;
+        bit<16> output_5_0;
+        bit<16> output_5_1;
+        bit<16> output_5_2;
+        bit<16> output_6_0;
+        bit<16> output_6_1;
+        bit<16> output_6_2;
+        bit<16> output_7_0;
+        bit<16> output_7_1;
+        bit<16> output_7_2;
+
 
         s1_ouput_store.read(output_0_0, index + 0);
         s1_ouput_store.read(output_0_1, index + 1);
@@ -608,30 +614,30 @@ control MyIngress(inout headers hdr,
         s1_ouput_store.read(output_7_1, index + 22);
         s1_ouput_store.read(output_7_2, index + 23);
 
-        bit<32> output_0_3 = hdr.s1_output0_calc.s1_output_0_3;
-        bit<32> output_0_4 = hdr.s1_output0_calc.s1_output_0_4;
-        bit<32> output_0_5 = hdr.s1_output0_calc.s1_output_0_5;
-        bit<32> output_1_3 = hdr.s1_output0_calc.s1_output_1_3;
-        bit<32> output_1_4 = hdr.s1_output0_calc.s1_output_1_4;
-        bit<32> output_1_5 = hdr.s1_output0_calc.s1_output_1_5;
-        bit<32> output_2_3 = hdr.s1_output0_calc.s1_output_2_3;
-        bit<32> output_2_4 = hdr.s1_output0_calc.s1_output_2_4;
-        bit<32> output_2_5 = hdr.s1_output0_calc.s1_output_2_5;
-        bit<32> output_3_3 = hdr.s1_output0_calc.s1_output_3_3;
-        bit<32> output_3_4 = hdr.s1_output0_calc.s1_output_3_4;
-        bit<32> output_3_5 = hdr.s1_output0_calc.s1_output_3_5;
-        bit<32> output_4_3 = hdr.s1_output0_calc.s1_output_4_3;
-        bit<32> output_4_4 = hdr.s1_output0_calc.s1_output_4_4;
-        bit<32> output_4_5 = hdr.s1_output0_calc.s1_output_4_5;
-        bit<32> output_5_3 = hdr.s1_output0_calc.s1_output_5_3;
-        bit<32> output_5_4 = hdr.s1_output0_calc.s1_output_5_4;
-        bit<32> output_5_5 = hdr.s1_output0_calc.s1_output_5_5;
-        bit<32> output_6_3 = hdr.s1_output0_calc.s1_output_6_3;
-        bit<32> output_6_4 = hdr.s1_output0_calc.s1_output_6_4;
-        bit<32> output_6_5 = hdr.s1_output0_calc.s1_output_6_5;
-        bit<32> output_7_3 = hdr.s1_output0_calc.s1_output_7_3;
-        bit<32> output_7_4 = hdr.s1_output0_calc.s1_output_7_4;
-        bit<32> output_7_5 = hdr.s1_output0_calc.s1_output_7_5;
+        bit<16> output_0_3 = hdr.s1_output0_calc.s1_output_0_3;
+        bit<16> output_0_4 = hdr.s1_output0_calc.s1_output_0_4;
+        bit<16> output_0_5 = hdr.s1_output0_calc.s1_output_0_5;
+        bit<16> output_1_3 = hdr.s1_output0_calc.s1_output_1_3;
+        bit<16> output_1_4 = hdr.s1_output0_calc.s1_output_1_4;
+        bit<16> output_1_5 = hdr.s1_output0_calc.s1_output_1_5;
+        bit<16> output_2_3 = hdr.s1_output0_calc.s1_output_2_3;
+        bit<16> output_2_4 = hdr.s1_output0_calc.s1_output_2_4;
+        bit<16> output_2_5 = hdr.s1_output0_calc.s1_output_2_5;
+        bit<16> output_3_3 = hdr.s1_output0_calc.s1_output_3_3;
+        bit<16> output_3_4 = hdr.s1_output0_calc.s1_output_3_4;
+        bit<16> output_3_5 = hdr.s1_output0_calc.s1_output_3_5;
+        bit<16> output_4_3 = hdr.s1_output0_calc.s1_output_4_3;
+        bit<16> output_4_4 = hdr.s1_output0_calc.s1_output_4_4;
+        bit<16> output_4_5 = hdr.s1_output0_calc.s1_output_4_5;
+        bit<16> output_5_3 = hdr.s1_output0_calc.s1_output_5_3;
+        bit<16> output_5_4 = hdr.s1_output0_calc.s1_output_5_4;
+        bit<16> output_5_5 = hdr.s1_output0_calc.s1_output_5_5;
+        bit<16> output_6_3 = hdr.s1_output0_calc.s1_output_6_3;
+        bit<16> output_6_4 = hdr.s1_output0_calc.s1_output_6_4;
+        bit<16> output_6_5 = hdr.s1_output0_calc.s1_output_6_5;
+        bit<16> output_7_3 = hdr.s1_output0_calc.s1_output_7_3;
+        bit<16> output_7_4 = hdr.s1_output0_calc.s1_output_7_4;
+        bit<16> output_7_5 = hdr.s1_output0_calc.s1_output_7_5;
 
         // 残差连接，结果放在hdr.s1_output0_calc里
         hdr.s0_output0_calc.s0_output_0_0 = output_0_0 + hdr.s0_output0_calc.s0_output_0_0;
