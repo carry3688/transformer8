@@ -1420,8 +1420,7 @@ control MyIngress(inout headers hdr,
             calc_inv_sqrt_var7.apply();
 
             operation_norm();
-            standard_metadata.mcast_grp =  1;
-            // standard_metadata.egress_spec = 2;
+            standard_metadata.egress_spec = 2;
         } else {
             operation_drop();
         }
