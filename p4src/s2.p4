@@ -18,6 +18,43 @@ const bit<8>  P4CALC_VER   = 0x01;   // v0.1
 
 const bit<16> ETHERTYPE_PTP  = 0x88F7;
 
+const bit<32> w0_0_0 = 0xffffb44c;
+const bit<32> w0_0_1 = 0xfffff03d;
+const bit<32> w0_0_2 = 0xffffcc54;
+const bit<32> w0_0_3 = 0x00005dcc;
+const bit<32> w0_0_4 = 0xfffff64a;
+const bit<32> w0_0_5 = 0x0000226d;
+const bit<32> w0_1_0 = 0x000057d6;
+const bit<32> w0_1_1 = 0xffff89cc;
+const bit<32> w0_1_2 = 0x00005958;
+const bit<32> w0_1_3 = 0x00006acc;
+const bit<32> w0_1_4 = 0xfffff0d1;
+const bit<32> w0_1_5 = 0xffff9963;
+const bit<32> w0_2_0 = 0x00007af1;
+const bit<32> w0_2_1 = 0x00001ed8;
+const bit<32> w0_2_2 = 0xffffb6f3;
+const bit<32> w0_2_3 = 0x00007bf2;
+const bit<32> w0_2_4 = 0xffffa0e9;
+const bit<32> w0_2_5 = 0x00005182;
+const bit<32> w0_3_0 = 0xffffedfb;
+const bit<32> w0_3_1 = 0x00001e21;
+const bit<32> w0_3_2 = 0xffffc5ae;
+const bit<32> w0_3_3 = 0x00001468;
+const bit<32> w0_3_4 = 0x000069f9;
+const bit<32> w0_3_5 = 0xffffec6f;
+const bit<32> w0_4_0 = 0xffffb1ff;
+const bit<32> w0_4_1 = 0xffffc3fd;
+const bit<32> w0_4_2 = 0xfffff532;
+const bit<32> w0_4_3 = 0x00007c6d;
+const bit<32> w0_4_4 = 0xffffbcac;
+const bit<32> w0_4_5 = 0x00002354;
+const bit<32> w0_5_0 = 0xffffab84;
+const bit<32> w0_5_1 = 0xffffe6f4;
+const bit<32> w0_5_2 = 0x00007e53;
+const bit<32> w0_5_3 = 0x00004455;
+const bit<32> w0_5_4 = 0xffff8d6f;
+const bit<32> w0_5_5 = 0xffffd6d2;
+
 header ptp_t {
     bit<4>   transport_specifics;
     bit<4>   message_type;
@@ -166,6 +203,75 @@ struct ingress_metadata_t {
 
 struct metadata {
     bit<32>  is_s1_output_store;
+
+    bit<16> deviation_0_0;
+    bit<16> deviation_0_1;
+    bit<16> deviation_0_2;
+    bit<16> deviation_0_3;
+    bit<16> deviation_0_4;
+    bit<16> deviation_0_5;
+    bit<16> deviation_1_0;
+    bit<16> deviation_1_1;
+    bit<16> deviation_1_2;
+    bit<16> deviation_1_3;
+    bit<16> deviation_1_4;
+    bit<16> deviation_1_5;
+    bit<16> deviation_2_0;
+    bit<16> deviation_2_1;
+    bit<16> deviation_2_2;
+    bit<16> deviation_2_3;
+    bit<16> deviation_2_4;
+    bit<16> deviation_2_5;
+    bit<16> deviation_3_0;
+    bit<16> deviation_3_1;
+    bit<16> deviation_3_2;
+    bit<16> deviation_3_3;
+    bit<16> deviation_3_4;
+    bit<16> deviation_3_5;
+    bit<16> deviation_4_0;
+    bit<16> deviation_4_1;
+    bit<16> deviation_4_2;
+    bit<16> deviation_4_3;
+    bit<16> deviation_4_4;
+    bit<16> deviation_4_5;
+    bit<16> deviation_5_0;
+    bit<16> deviation_5_1;
+    bit<16> deviation_5_2;
+    bit<16> deviation_5_3;
+    bit<16> deviation_5_4;
+    bit<16> deviation_5_5;
+    bit<16> deviation_6_0;
+    bit<16> deviation_6_1;
+    bit<16> deviation_6_2;
+    bit<16> deviation_6_3;
+    bit<16> deviation_6_4;
+    bit<16> deviation_6_5;
+    bit<16> deviation_7_0;
+    bit<16> deviation_7_1;
+    bit<16> deviation_7_2;
+    bit<16> deviation_7_3;
+    bit<16> deviation_7_4;
+    bit<16> deviation_7_5;
+
+    // 求出来的方差，用作匹配表项
+    bit<16> variance0;
+    bit<16> variance1;
+    bit<16> variance2;
+    bit<16> variance3;
+    bit<16> variance4;
+    bit<16> variance5;
+    bit<16> variance6;
+    bit<16> variance7;
+
+    // 计算出来的1/sqrt(var(x))，用作求norm值
+    bit<16> inv_sqrt_var0;
+    bit<16> inv_sqrt_var1;
+    bit<16> inv_sqrt_var2;
+    bit<16> inv_sqrt_var3;
+    bit<16> inv_sqrt_var4;
+    bit<16> inv_sqrt_var5;
+    bit<16> inv_sqrt_var6;
+    bit<16> inv_sqrt_var7;
 }
 
 /*************************************************************************
@@ -402,109 +508,154 @@ control MyIngress(inout headers hdr,
         bit<16> output_7_1 = hdr.s1_output0_calc.s1_output_7_1;
         bit<16> output_7_2 = hdr.s1_output0_calc.s1_output_7_2;
 
+        // 16位扩充到32位
+        bit<32> output32_0_0 = (bit<32>) output_0_0 | (( output_0_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_0_1 = (bit<32>) output_0_1 | (( output_0_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_0_2 = (bit<32>) output_0_2 | (( output_0_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_0_3 = (bit<32>) output_0_3 | (( output_0_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_0_4 = (bit<32>) output_0_4 | (( output_0_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_0_5 = (bit<32>) output_0_5 | (( output_0_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_1_0 = (bit<32>) output_1_0 | (( output_1_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_1_1 = (bit<32>) output_1_1 | (( output_1_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_1_2 = (bit<32>) output_1_2 | (( output_1_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_1_3 = (bit<32>) output_1_3 | (( output_1_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_1_4 = (bit<32>) output_1_4 | (( output_1_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_1_5 = (bit<32>) output_1_5 | (( output_1_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_2_0 = (bit<32>) output_2_0 | (( output_2_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_2_1 = (bit<32>) output_2_1 | (( output_2_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_2_2 = (bit<32>) output_2_2 | (( output_2_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_2_3 = (bit<32>) output_2_3 | (( output_2_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_2_4 = (bit<32>) output_2_4 | (( output_2_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_2_5 = (bit<32>) output_2_5 | (( output_2_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_3_0 = (bit<32>) output_3_0 | (( output_3_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_3_1 = (bit<32>) output_3_1 | (( output_3_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_3_2 = (bit<32>) output_3_2 | (( output_3_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_3_3 = (bit<32>) output_3_3 | (( output_3_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_3_4 = (bit<32>) output_3_4 | (( output_3_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_3_5 = (bit<32>) output_3_5 | (( output_3_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_4_0 = (bit<32>) output_4_0 | (( output_4_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_4_1 = (bit<32>) output_4_1 | (( output_4_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_4_2 = (bit<32>) output_4_2 | (( output_4_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_4_3 = (bit<32>) output_4_3 | (( output_4_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_4_4 = (bit<32>) output_4_4 | (( output_4_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_4_5 = (bit<32>) output_4_5 | (( output_4_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_5_0 = (bit<32>) output_5_0 | (( output_5_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_5_1 = (bit<32>) output_5_1 | (( output_5_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_5_2 = (bit<32>) output_5_2 | (( output_5_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_5_3 = (bit<32>) output_5_3 | (( output_5_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_5_4 = (bit<32>) output_5_4 | (( output_5_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_5_5 = (bit<32>) output_5_5 | (( output_5_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_6_0 = (bit<32>) output_6_0 | (( output_6_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_6_1 = (bit<32>) output_6_1 | (( output_6_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_6_2 = (bit<32>) output_6_2 | (( output_6_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_6_3 = (bit<32>) output_6_3 | (( output_6_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_6_4 = (bit<32>) output_6_4 | (( output_6_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_6_5 = (bit<32>) output_6_5 | (( output_6_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_7_0 = (bit<32>) output_7_0 | (( output_7_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_7_1 = (bit<32>) output_7_1 | (( output_7_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_7_2 = (bit<32>) output_7_2 | (( output_7_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_7_3 = (bit<32>) output_7_3 | (( output_7_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_7_4 = (bit<32>) output_7_4 | (( output_7_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_7_5 = (bit<32>) output_7_5 | (( output_7_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
 
-
-        /*
-        hdr.s1_output0_calc.s1_output_0_0 = output_0_0;
-        hdr.s1_output0_calc.s1_output_0_1 = output_0_1;
-        hdr.s1_output0_calc.s1_output_0_2 = output_0_2;
-        hdr.s1_output0_calc.s1_output_0_3 = output_0_3;
-        hdr.s1_output0_calc.s1_output_0_4 = output_0_4;
-        hdr.s1_output0_calc.s1_output_0_5 = output_0_5;
-        hdr.s1_output0_calc.s1_output_1_0 = output_1_0;
-        hdr.s1_output0_calc.s1_output_1_1 = output_1_1;
-        hdr.s1_output0_calc.s1_output_1_2 = output_1_2;
-        hdr.s1_output0_calc.s1_output_1_3 = output_1_3;
-        hdr.s1_output0_calc.s1_output_1_4 = output_1_4;
-        hdr.s1_output0_calc.s1_output_1_5 = output_1_5;
-        hdr.s1_output0_calc.s1_output_2_0 = output_2_0;
-        hdr.s1_output0_calc.s1_output_2_1 = output_2_1;
-        hdr.s1_output0_calc.s1_output_2_2 = output_2_2;
-        hdr.s1_output0_calc.s1_output_2_3 = output_2_3;
-        hdr.s1_output0_calc.s1_output_2_4 = output_2_4;
-        hdr.s1_output0_calc.s1_output_2_5 = output_2_5;
-        hdr.s1_output0_calc.s1_output_3_0 = output_3_0;
-        hdr.s1_output0_calc.s1_output_3_1 = output_3_1;
-        hdr.s1_output0_calc.s1_output_3_2 = output_3_2;
-        hdr.s1_output0_calc.s1_output_3_3 = output_3_3;
-        hdr.s1_output0_calc.s1_output_3_4 = output_3_4;
-        hdr.s1_output0_calc.s1_output_3_5 = output_3_5;
-        hdr.s1_output0_calc.s1_output_4_0 = output_4_0;
-        hdr.s1_output0_calc.s1_output_4_1 = output_4_1;
-        hdr.s1_output0_calc.s1_output_4_2 = output_4_2;
-        hdr.s1_output0_calc.s1_output_4_3 = output_4_3;
-        hdr.s1_output0_calc.s1_output_4_4 = output_4_4;
-        hdr.s1_output0_calc.s1_output_4_5 = output_4_5;
-        hdr.s1_output0_calc.s1_output_5_0 = output_5_0;
-        hdr.s1_output0_calc.s1_output_5_1 = output_5_1;
-        hdr.s1_output0_calc.s1_output_5_2 = output_5_2;
-        hdr.s1_output0_calc.s1_output_5_3 = output_5_3;
-        hdr.s1_output0_calc.s1_output_5_4 = output_5_4;
-        hdr.s1_output0_calc.s1_output_5_5 = output_5_5;
-        hdr.s1_output0_calc.s1_output_6_0 = output_6_0;
-        hdr.s1_output0_calc.s1_output_6_1 = output_6_1;
-        hdr.s1_output0_calc.s1_output_6_2 = output_6_2;
-        hdr.s1_output0_calc.s1_output_6_3 = output_6_3;
-        hdr.s1_output0_calc.s1_output_6_4 = output_6_4;
-        hdr.s1_output0_calc.s1_output_6_5 = output_6_5;
-        hdr.s1_output0_calc.s1_output_7_0 = output_7_0;
-        hdr.s1_output0_calc.s1_output_7_1 = output_7_1;
-        hdr.s1_output0_calc.s1_output_7_2 = output_7_2;
-        hdr.s1_output0_calc.s1_output_7_3 = output_7_3;
-        hdr.s1_output0_calc.s1_output_7_4 = output_7_4;
-        hdr.s1_output0_calc.s1_output_7_5 = output_7_5;
-        */
+        bit<16> output16_0_0 = (output32_0_0 *w0_0_0 + output32_0_1 *w0_1_0 + output32_0_2 *w0_2_0 + output32_0_3 *w0_3_0 + output32_0_4 *w0_4_0 + output32_0_5 *w0_5_0)[23:8];
+        bit<16> output16_0_1 = (output32_0_0 *w0_0_1 + output32_0_1 *w0_1_1 + output32_0_2 *w0_2_1 + output32_0_3 *w0_3_1 + output32_0_4 *w0_4_1 + output32_0_5 *w0_5_1)[23:8];
+        bit<16> output16_0_2 = (output32_0_0 *w0_0_2 + output32_0_1 *w0_1_2 + output32_0_2 *w0_2_2 + output32_0_3 *w0_3_2 + output32_0_4 *w0_4_2 + output32_0_5 *w0_5_2)[23:8];
+        bit<16> output16_0_3 = (output32_0_0 *w0_0_3 + output32_0_1 *w0_1_3 + output32_0_2 *w0_2_3 + output32_0_3 *w0_3_3 + output32_0_4 *w0_4_3 + output32_0_5 *w0_5_3)[23:8];
+        bit<16> output16_0_4 = (output32_0_0 *w0_0_4 + output32_0_1 *w0_1_4 + output32_0_2 *w0_2_4 + output32_0_3 *w0_3_4 + output32_0_4 *w0_4_4 + output32_0_5 *w0_5_4)[23:8];
+        bit<16> output16_0_5 = (output32_0_0 *w0_0_5 + output32_0_1 *w0_1_5 + output32_0_2 *w0_2_5 + output32_0_3 *w0_3_5 + output32_0_4 *w0_4_5 + output32_0_5 *w0_5_5)[23:8];
+        bit<16> output16_1_0 = (output32_1_0 *w0_0_0 + output32_1_1 *w0_1_0 + output32_1_2 *w0_2_0 + output32_1_3 *w0_3_0 + output32_1_4 *w0_4_0 + output32_1_5 *w0_5_0)[23:8];
+        bit<16> output16_1_1 = (output32_1_0 *w0_0_1 + output32_1_1 *w0_1_1 + output32_1_2 *w0_2_1 + output32_1_3 *w0_3_1 + output32_1_4 *w0_4_1 + output32_1_5 *w0_5_1)[23:8];
+        bit<16> output16_1_2 = (output32_1_0 *w0_0_2 + output32_1_1 *w0_1_2 + output32_1_2 *w0_2_2 + output32_1_3 *w0_3_2 + output32_1_4 *w0_4_2 + output32_1_5 *w0_5_2)[23:8];
+        bit<16> output16_1_3 = (output32_1_0 *w0_0_3 + output32_1_1 *w0_1_3 + output32_1_2 *w0_2_3 + output32_1_3 *w0_3_3 + output32_1_4 *w0_4_3 + output32_1_5 *w0_5_3)[23:8];
+        bit<16> output16_1_4 = (output32_1_0 *w0_0_4 + output32_1_1 *w0_1_4 + output32_1_2 *w0_2_4 + output32_1_3 *w0_3_4 + output32_1_4 *w0_4_4 + output32_1_5 *w0_5_4)[23:8];
+        bit<16> output16_1_5 = (output32_1_0 *w0_0_5 + output32_1_1 *w0_1_5 + output32_1_2 *w0_2_5 + output32_1_3 *w0_3_5 + output32_1_4 *w0_4_5 + output32_1_5 *w0_5_5)[23:8];
+        bit<16> output16_2_0 = (output32_2_0 *w0_0_0 + output32_2_1 *w0_1_0 + output32_2_2 *w0_2_0 + output32_2_3 *w0_3_0 + output32_2_4 *w0_4_0 + output32_2_5 *w0_5_0)[23:8];
+        bit<16> output16_2_1 = (output32_2_0 *w0_0_1 + output32_2_1 *w0_1_1 + output32_2_2 *w0_2_1 + output32_2_3 *w0_3_1 + output32_2_4 *w0_4_1 + output32_2_5 *w0_5_1)[23:8];
+        bit<16> output16_2_2 = (output32_2_0 *w0_0_2 + output32_2_1 *w0_1_2 + output32_2_2 *w0_2_2 + output32_2_3 *w0_3_2 + output32_2_4 *w0_4_2 + output32_2_5 *w0_5_2)[23:8];
+        bit<16> output16_2_3 = (output32_2_0 *w0_0_3 + output32_2_1 *w0_1_3 + output32_2_2 *w0_2_3 + output32_2_3 *w0_3_3 + output32_2_4 *w0_4_3 + output32_2_5 *w0_5_3)[23:8];
+        bit<16> output16_2_4 = (output32_2_0 *w0_0_4 + output32_2_1 *w0_1_4 + output32_2_2 *w0_2_4 + output32_2_3 *w0_3_4 + output32_2_4 *w0_4_4 + output32_2_5 *w0_5_4)[23:8];
+        bit<16> output16_2_5 = (output32_2_0 *w0_0_5 + output32_2_1 *w0_1_5 + output32_2_2 *w0_2_5 + output32_2_3 *w0_3_5 + output32_2_4 *w0_4_5 + output32_2_5 *w0_5_5)[23:8];
+        bit<16> output16_3_0 = (output32_3_0 *w0_0_0 + output32_3_1 *w0_1_0 + output32_3_2 *w0_2_0 + output32_3_3 *w0_3_0 + output32_3_4 *w0_4_0 + output32_3_5 *w0_5_0)[23:8];
+        bit<16> output16_3_1 = (output32_3_0 *w0_0_1 + output32_3_1 *w0_1_1 + output32_3_2 *w0_2_1 + output32_3_3 *w0_3_1 + output32_3_4 *w0_4_1 + output32_3_5 *w0_5_1)[23:8];
+        bit<16> output16_3_2 = (output32_3_0 *w0_0_2 + output32_3_1 *w0_1_2 + output32_3_2 *w0_2_2 + output32_3_3 *w0_3_2 + output32_3_4 *w0_4_2 + output32_3_5 *w0_5_2)[23:8];
+        bit<16> output16_3_3 = (output32_3_0 *w0_0_3 + output32_3_1 *w0_1_3 + output32_3_2 *w0_2_3 + output32_3_3 *w0_3_3 + output32_3_4 *w0_4_3 + output32_3_5 *w0_5_3)[23:8];
+        bit<16> output16_3_4 = (output32_3_0 *w0_0_4 + output32_3_1 *w0_1_4 + output32_3_2 *w0_2_4 + output32_3_3 *w0_3_4 + output32_3_4 *w0_4_4 + output32_3_5 *w0_5_4)[23:8];
+        bit<16> output16_3_5 = (output32_3_0 *w0_0_5 + output32_3_1 *w0_1_5 + output32_3_2 *w0_2_5 + output32_3_3 *w0_3_5 + output32_3_4 *w0_4_5 + output32_3_5 *w0_5_5)[23:8];
+        bit<16> output16_4_0 = (output32_4_0 *w0_0_0 + output32_4_1 *w0_1_0 + output32_4_2 *w0_2_0 + output32_4_3 *w0_3_0 + output32_4_4 *w0_4_0 + output32_4_5 *w0_5_0)[23:8];
+        bit<16> output16_4_1 = (output32_4_0 *w0_0_1 + output32_4_1 *w0_1_1 + output32_4_2 *w0_2_1 + output32_4_3 *w0_3_1 + output32_4_4 *w0_4_1 + output32_4_5 *w0_5_1)[23:8];
+        bit<16> output16_4_2 = (output32_4_0 *w0_0_2 + output32_4_1 *w0_1_2 + output32_4_2 *w0_2_2 + output32_4_3 *w0_3_2 + output32_4_4 *w0_4_2 + output32_4_5 *w0_5_2)[23:8];
+        bit<16> output16_4_3 = (output32_4_0 *w0_0_3 + output32_4_1 *w0_1_3 + output32_4_2 *w0_2_3 + output32_4_3 *w0_3_3 + output32_4_4 *w0_4_3 + output32_4_5 *w0_5_3)[23:8];
+        bit<16> output16_4_4 = (output32_4_0 *w0_0_4 + output32_4_1 *w0_1_4 + output32_4_2 *w0_2_4 + output32_4_3 *w0_3_4 + output32_4_4 *w0_4_4 + output32_4_5 *w0_5_4)[23:8];
+        bit<16> output16_4_5 = (output32_4_0 *w0_0_5 + output32_4_1 *w0_1_5 + output32_4_2 *w0_2_5 + output32_4_3 *w0_3_5 + output32_4_4 *w0_4_5 + output32_4_5 *w0_5_5)[23:8];
+        bit<16> output16_5_0 = (output32_5_0 *w0_0_0 + output32_5_1 *w0_1_0 + output32_5_2 *w0_2_0 + output32_5_3 *w0_3_0 + output32_5_4 *w0_4_0 + output32_5_5 *w0_5_0)[23:8];
+        bit<16> output16_5_1 = (output32_5_0 *w0_0_1 + output32_5_1 *w0_1_1 + output32_5_2 *w0_2_1 + output32_5_3 *w0_3_1 + output32_5_4 *w0_4_1 + output32_5_5 *w0_5_1)[23:8];
+        bit<16> output16_5_2 = (output32_5_0 *w0_0_2 + output32_5_1 *w0_1_2 + output32_5_2 *w0_2_2 + output32_5_3 *w0_3_2 + output32_5_4 *w0_4_2 + output32_5_5 *w0_5_2)[23:8];
+        bit<16> output16_5_3 = (output32_5_0 *w0_0_3 + output32_5_1 *w0_1_3 + output32_5_2 *w0_2_3 + output32_5_3 *w0_3_3 + output32_5_4 *w0_4_3 + output32_5_5 *w0_5_3)[23:8];
+        bit<16> output16_5_4 = (output32_5_0 *w0_0_4 + output32_5_1 *w0_1_4 + output32_5_2 *w0_2_4 + output32_5_3 *w0_3_4 + output32_5_4 *w0_4_4 + output32_5_5 *w0_5_4)[23:8];
+        bit<16> output16_5_5 = (output32_5_0 *w0_0_5 + output32_5_1 *w0_1_5 + output32_5_2 *w0_2_5 + output32_5_3 *w0_3_5 + output32_5_4 *w0_4_5 + output32_5_5 *w0_5_5)[23:8];
+        bit<16> output16_6_0 = (output32_6_0 *w0_0_0 + output32_6_1 *w0_1_0 + output32_6_2 *w0_2_0 + output32_6_3 *w0_3_0 + output32_6_4 *w0_4_0 + output32_6_5 *w0_5_0)[23:8];
+        bit<16> output16_6_1 = (output32_6_0 *w0_0_1 + output32_6_1 *w0_1_1 + output32_6_2 *w0_2_1 + output32_6_3 *w0_3_1 + output32_6_4 *w0_4_1 + output32_6_5 *w0_5_1)[23:8];
+        bit<16> output16_6_2 = (output32_6_0 *w0_0_2 + output32_6_1 *w0_1_2 + output32_6_2 *w0_2_2 + output32_6_3 *w0_3_2 + output32_6_4 *w0_4_2 + output32_6_5 *w0_5_2)[23:8];
+        bit<16> output16_6_3 = (output32_6_0 *w0_0_3 + output32_6_1 *w0_1_3 + output32_6_2 *w0_2_3 + output32_6_3 *w0_3_3 + output32_6_4 *w0_4_3 + output32_6_5 *w0_5_3)[23:8];
+        bit<16> output16_6_4 = (output32_6_0 *w0_0_4 + output32_6_1 *w0_1_4 + output32_6_2 *w0_2_4 + output32_6_3 *w0_3_4 + output32_6_4 *w0_4_4 + output32_6_5 *w0_5_4)[23:8];
+        bit<16> output16_6_5 = (output32_6_0 *w0_0_5 + output32_6_1 *w0_1_5 + output32_6_2 *w0_2_5 + output32_6_3 *w0_3_5 + output32_6_4 *w0_4_5 + output32_6_5 *w0_5_5)[23:8];
+        bit<16> output16_7_0 = (output32_7_0 *w0_0_0 + output32_7_1 *w0_1_0 + output32_7_2 *w0_2_0 + output32_7_3 *w0_3_0 + output32_7_4 *w0_4_0 + output32_7_5 *w0_5_0)[23:8];
+        bit<16> output16_7_1 = (output32_7_0 *w0_0_1 + output32_7_1 *w0_1_1 + output32_7_2 *w0_2_1 + output32_7_3 *w0_3_1 + output32_7_4 *w0_4_1 + output32_7_5 *w0_5_1)[23:8];
+        bit<16> output16_7_2 = (output32_7_0 *w0_0_2 + output32_7_1 *w0_1_2 + output32_7_2 *w0_2_2 + output32_7_3 *w0_3_2 + output32_7_4 *w0_4_2 + output32_7_5 *w0_5_2)[23:8];
+        bit<16> output16_7_3 = (output32_7_0 *w0_0_3 + output32_7_1 *w0_1_3 + output32_7_2 *w0_2_3 + output32_7_3 *w0_3_3 + output32_7_4 *w0_4_3 + output32_7_5 *w0_5_3)[23:8];
+        bit<16> output16_7_4 = (output32_7_0 *w0_0_4 + output32_7_1 *w0_1_4 + output32_7_2 *w0_2_4 + output32_7_3 *w0_3_4 + output32_7_4 *w0_4_4 + output32_7_5 *w0_5_4)[23:8];
+        bit<16> output16_7_5 = (output32_7_0 *w0_0_5 + output32_7_1 *w0_1_5 + output32_7_2 *w0_2_5 + output32_7_3 *w0_3_5 + output32_7_4 *w0_4_5 + output32_7_5 *w0_5_5)[23:8];
         
         // 残差连接，结果放在hdr.s1_output0_calc里
-        hdr.s0_output0_calc.s0_output_0_0 = output_0_0 + hdr.s0_output0_calc.s0_output_0_0;
-        hdr.s0_output0_calc.s0_output_0_1 = output_0_1 + hdr.s0_output0_calc.s0_output_0_1;
-        hdr.s0_output0_calc.s0_output_0_2 = output_0_2 + hdr.s0_output0_calc.s0_output_0_2;
-        hdr.s0_output0_calc.s0_output_0_3 = output_0_3 + hdr.s0_output0_calc.s0_output_0_3;
-        hdr.s0_output0_calc.s0_output_0_4 = output_0_4 + hdr.s0_output0_calc.s0_output_0_4;
-        hdr.s0_output0_calc.s0_output_0_5 = output_0_5 + hdr.s0_output0_calc.s0_output_0_5;
-        hdr.s0_output0_calc.s0_output_1_0 = output_1_0 + hdr.s0_output0_calc.s0_output_1_0;
-        hdr.s0_output0_calc.s0_output_1_1 = output_1_1 + hdr.s0_output0_calc.s0_output_1_1;
-        hdr.s0_output0_calc.s0_output_1_2 = output_1_2 + hdr.s0_output0_calc.s0_output_1_2;
-        hdr.s0_output0_calc.s0_output_1_3 = output_1_3 + hdr.s0_output0_calc.s0_output_1_3;
-        hdr.s0_output0_calc.s0_output_1_4 = output_1_4 + hdr.s0_output0_calc.s0_output_1_4;
-        hdr.s0_output0_calc.s0_output_1_5 = output_1_5 + hdr.s0_output0_calc.s0_output_1_5;
-        hdr.s0_output0_calc.s0_output_2_0 = output_2_0 + hdr.s0_output0_calc.s0_output_2_0;
-        hdr.s0_output0_calc.s0_output_2_1 = output_2_1 + hdr.s0_output0_calc.s0_output_2_1;
-        hdr.s0_output0_calc.s0_output_2_2 = output_2_2 + hdr.s0_output0_calc.s0_output_2_2;
-        hdr.s0_output0_calc.s0_output_2_3 = output_2_3 + hdr.s0_output0_calc.s0_output_2_3;
-        hdr.s0_output0_calc.s0_output_2_4 = output_2_4 + hdr.s0_output0_calc.s0_output_2_4;
-        hdr.s0_output0_calc.s0_output_2_5 = output_2_5 + hdr.s0_output0_calc.s0_output_2_5;
-        hdr.s0_output0_calc.s0_output_3_0 = output_3_0 + hdr.s0_output0_calc.s0_output_3_0;
-        hdr.s0_output0_calc.s0_output_3_1 = output_3_1 + hdr.s0_output0_calc.s0_output_3_1;
-        hdr.s0_output0_calc.s0_output_3_2 = output_3_2 + hdr.s0_output0_calc.s0_output_3_2;
-        hdr.s0_output0_calc.s0_output_3_3 = output_3_3 + hdr.s0_output0_calc.s0_output_3_3;
-        hdr.s0_output0_calc.s0_output_3_4 = output_3_4 + hdr.s0_output0_calc.s0_output_3_4;
-        hdr.s0_output0_calc.s0_output_3_5 = output_3_5 + hdr.s0_output0_calc.s0_output_3_5;
-        hdr.s0_output0_calc.s0_output_4_0 = output_4_0 + hdr.s0_output0_calc.s0_output_4_0;
-        hdr.s0_output0_calc.s0_output_4_1 = output_4_1 + hdr.s0_output0_calc.s0_output_4_1;
-        hdr.s0_output0_calc.s0_output_4_2 = output_4_2 + hdr.s0_output0_calc.s0_output_4_2;
-        hdr.s0_output0_calc.s0_output_4_3 = output_4_3 + hdr.s0_output0_calc.s0_output_4_3;
-        hdr.s0_output0_calc.s0_output_4_4 = output_4_4 + hdr.s0_output0_calc.s0_output_4_4;
-        hdr.s0_output0_calc.s0_output_4_5 = output_4_5 + hdr.s0_output0_calc.s0_output_4_5;
-        hdr.s0_output0_calc.s0_output_5_0 = output_5_0 + hdr.s0_output0_calc.s0_output_5_0;
-        hdr.s0_output0_calc.s0_output_5_1 = output_5_1 + hdr.s0_output0_calc.s0_output_5_1;
-        hdr.s0_output0_calc.s0_output_5_2 = output_5_2 + hdr.s0_output0_calc.s0_output_5_2;
-        hdr.s0_output0_calc.s0_output_5_3 = output_5_3 + hdr.s0_output0_calc.s0_output_5_3;
-        hdr.s0_output0_calc.s0_output_5_4 = output_5_4 + hdr.s0_output0_calc.s0_output_5_4;
-        hdr.s0_output0_calc.s0_output_5_5 = output_5_5 + hdr.s0_output0_calc.s0_output_5_5;
-        hdr.s0_output0_calc.s0_output_6_0 = output_6_0 + hdr.s0_output0_calc.s0_output_6_0;
-        hdr.s0_output0_calc.s0_output_6_1 = output_6_1 + hdr.s0_output0_calc.s0_output_6_1;
-        hdr.s0_output0_calc.s0_output_6_2 = output_6_2 + hdr.s0_output0_calc.s0_output_6_2;
-        hdr.s0_output0_calc.s0_output_6_3 = output_6_3 + hdr.s0_output0_calc.s0_output_6_3;
-        hdr.s0_output0_calc.s0_output_6_4 = output_6_4 + hdr.s0_output0_calc.s0_output_6_4;
-        hdr.s0_output0_calc.s0_output_6_5 = output_6_5 + hdr.s0_output0_calc.s0_output_6_5;
-        hdr.s0_output0_calc.s0_output_7_0 = output_7_0 + hdr.s0_output0_calc.s0_output_7_0;
-        hdr.s0_output0_calc.s0_output_7_1 = output_7_1 + hdr.s0_output0_calc.s0_output_7_1;
-        hdr.s0_output0_calc.s0_output_7_2 = output_7_2 + hdr.s0_output0_calc.s0_output_7_2;
-        hdr.s0_output0_calc.s0_output_7_3 = output_7_3 + hdr.s0_output0_calc.s0_output_7_3;
-        hdr.s0_output0_calc.s0_output_7_4 = output_7_4 + hdr.s0_output0_calc.s0_output_7_4;
-        hdr.s0_output0_calc.s0_output_7_5 = output_7_5 + hdr.s0_output0_calc.s0_output_7_5;
-
+        hdr.s0_output0_calc.s0_output_0_0 = output16_0_0 + hdr.s0_output0_calc.s0_output_0_0;
+        hdr.s0_output0_calc.s0_output_0_1 = output16_0_1 + hdr.s0_output0_calc.s0_output_0_1;
+        hdr.s0_output0_calc.s0_output_0_2 = output16_0_2 + hdr.s0_output0_calc.s0_output_0_2;
+        hdr.s0_output0_calc.s0_output_0_3 = output16_0_3 + hdr.s0_output0_calc.s0_output_0_3;
+        hdr.s0_output0_calc.s0_output_0_4 = output16_0_4 + hdr.s0_output0_calc.s0_output_0_4;
+        hdr.s0_output0_calc.s0_output_0_5 = output16_0_5 + hdr.s0_output0_calc.s0_output_0_5;
+        hdr.s0_output0_calc.s0_output_1_0 = output16_1_0 + hdr.s0_output0_calc.s0_output_1_0;
+        hdr.s0_output0_calc.s0_output_1_1 = output16_1_1 + hdr.s0_output0_calc.s0_output_1_1;
+        hdr.s0_output0_calc.s0_output_1_2 = output16_1_2 + hdr.s0_output0_calc.s0_output_1_2;
+        hdr.s0_output0_calc.s0_output_1_3 = output16_1_3 + hdr.s0_output0_calc.s0_output_1_3;
+        hdr.s0_output0_calc.s0_output_1_4 = output16_1_4 + hdr.s0_output0_calc.s0_output_1_4;
+        hdr.s0_output0_calc.s0_output_1_5 = output16_1_5 + hdr.s0_output0_calc.s0_output_1_5;
+        hdr.s0_output0_calc.s0_output_2_0 = output16_2_0 + hdr.s0_output0_calc.s0_output_2_0;
+        hdr.s0_output0_calc.s0_output_2_1 = output16_2_1 + hdr.s0_output0_calc.s0_output_2_1;
+        hdr.s0_output0_calc.s0_output_2_2 = output16_2_2 + hdr.s0_output0_calc.s0_output_2_2;
+        hdr.s0_output0_calc.s0_output_2_3 = output16_2_3 + hdr.s0_output0_calc.s0_output_2_3;
+        hdr.s0_output0_calc.s0_output_2_4 = output16_2_4 + hdr.s0_output0_calc.s0_output_2_4;
+        hdr.s0_output0_calc.s0_output_2_5 = output16_2_5 + hdr.s0_output0_calc.s0_output_2_5;
+        hdr.s0_output0_calc.s0_output_3_0 = output16_3_0 + hdr.s0_output0_calc.s0_output_3_0;
+        hdr.s0_output0_calc.s0_output_3_1 = output16_3_1 + hdr.s0_output0_calc.s0_output_3_1;
+        hdr.s0_output0_calc.s0_output_3_2 = output16_3_2 + hdr.s0_output0_calc.s0_output_3_2;
+        hdr.s0_output0_calc.s0_output_3_3 = output16_3_3 + hdr.s0_output0_calc.s0_output_3_3;
+        hdr.s0_output0_calc.s0_output_3_4 = output16_3_4 + hdr.s0_output0_calc.s0_output_3_4;
+        hdr.s0_output0_calc.s0_output_3_5 = output16_3_5 + hdr.s0_output0_calc.s0_output_3_5;
+        hdr.s0_output0_calc.s0_output_4_0 = output16_4_0 + hdr.s0_output0_calc.s0_output_4_0;
+        hdr.s0_output0_calc.s0_output_4_1 = output16_4_1 + hdr.s0_output0_calc.s0_output_4_1;
+        hdr.s0_output0_calc.s0_output_4_2 = output16_4_2 + hdr.s0_output0_calc.s0_output_4_2;
+        hdr.s0_output0_calc.s0_output_4_3 = output16_4_3 + hdr.s0_output0_calc.s0_output_4_3;
+        hdr.s0_output0_calc.s0_output_4_4 = output16_4_4 + hdr.s0_output0_calc.s0_output_4_4;
+        hdr.s0_output0_calc.s0_output_4_5 = output16_4_5 + hdr.s0_output0_calc.s0_output_4_5;
+        hdr.s0_output0_calc.s0_output_5_0 = output16_5_0 + hdr.s0_output0_calc.s0_output_5_0;
+        hdr.s0_output0_calc.s0_output_5_1 = output16_5_1 + hdr.s0_output0_calc.s0_output_5_1;
+        hdr.s0_output0_calc.s0_output_5_2 = output16_5_2 + hdr.s0_output0_calc.s0_output_5_2;
+        hdr.s0_output0_calc.s0_output_5_3 = output16_5_3 + hdr.s0_output0_calc.s0_output_5_3;
+        hdr.s0_output0_calc.s0_output_5_4 = output16_5_4 + hdr.s0_output0_calc.s0_output_5_4;
+        hdr.s0_output0_calc.s0_output_5_5 = output16_5_5 + hdr.s0_output0_calc.s0_output_5_5;
+        hdr.s0_output0_calc.s0_output_6_0 = output16_6_0 + hdr.s0_output0_calc.s0_output_6_0;
+        hdr.s0_output0_calc.s0_output_6_1 = output16_6_1 + hdr.s0_output0_calc.s0_output_6_1;
+        hdr.s0_output0_calc.s0_output_6_2 = output16_6_2 + hdr.s0_output0_calc.s0_output_6_2;
+        hdr.s0_output0_calc.s0_output_6_3 = output16_6_3 + hdr.s0_output0_calc.s0_output_6_3;
+        hdr.s0_output0_calc.s0_output_6_4 = output16_6_4 + hdr.s0_output0_calc.s0_output_6_4;
+        hdr.s0_output0_calc.s0_output_6_5 = output16_6_5 + hdr.s0_output0_calc.s0_output_6_5;
+        hdr.s0_output0_calc.s0_output_7_0 = output16_7_0 + hdr.s0_output0_calc.s0_output_7_0;
+        hdr.s0_output0_calc.s0_output_7_1 = output16_7_1 + hdr.s0_output0_calc.s0_output_7_1;
+        hdr.s0_output0_calc.s0_output_7_2 = output16_7_2 + hdr.s0_output0_calc.s0_output_7_2;
+        hdr.s0_output0_calc.s0_output_7_3 = output16_7_3 + hdr.s0_output0_calc.s0_output_7_3;
+        hdr.s0_output0_calc.s0_output_7_4 = output16_7_4 + hdr.s0_output0_calc.s0_output_7_4;
+        hdr.s0_output0_calc.s0_output_7_5 = output16_7_5 + hdr.s0_output0_calc.s0_output_7_5;
 
         // 对hdr.s1_output0_calc清零
         hdr.s1_output0_calc.s1_output_0_0 = 0;
@@ -639,55 +790,155 @@ control MyIngress(inout headers hdr,
         bit<16> output_7_4 = hdr.s1_output0_calc.s1_output_7_4;
         bit<16> output_7_5 = hdr.s1_output0_calc.s1_output_7_5;
 
+        // 16位扩充到32位
+        bit<32> output32_0_0 = (bit<32>) output_0_0 | (( output_0_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_0_1 = (bit<32>) output_0_1 | (( output_0_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_0_2 = (bit<32>) output_0_2 | (( output_0_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_0_3 = (bit<32>) output_0_3 | (( output_0_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_0_4 = (bit<32>) output_0_4 | (( output_0_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_0_5 = (bit<32>) output_0_5 | (( output_0_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_1_0 = (bit<32>) output_1_0 | (( output_1_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_1_1 = (bit<32>) output_1_1 | (( output_1_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_1_2 = (bit<32>) output_1_2 | (( output_1_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_1_3 = (bit<32>) output_1_3 | (( output_1_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_1_4 = (bit<32>) output_1_4 | (( output_1_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_1_5 = (bit<32>) output_1_5 | (( output_1_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_2_0 = (bit<32>) output_2_0 | (( output_2_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_2_1 = (bit<32>) output_2_1 | (( output_2_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_2_2 = (bit<32>) output_2_2 | (( output_2_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_2_3 = (bit<32>) output_2_3 | (( output_2_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_2_4 = (bit<32>) output_2_4 | (( output_2_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_2_5 = (bit<32>) output_2_5 | (( output_2_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_3_0 = (bit<32>) output_3_0 | (( output_3_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_3_1 = (bit<32>) output_3_1 | (( output_3_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_3_2 = (bit<32>) output_3_2 | (( output_3_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_3_3 = (bit<32>) output_3_3 | (( output_3_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_3_4 = (bit<32>) output_3_4 | (( output_3_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_3_5 = (bit<32>) output_3_5 | (( output_3_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_4_0 = (bit<32>) output_4_0 | (( output_4_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_4_1 = (bit<32>) output_4_1 | (( output_4_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_4_2 = (bit<32>) output_4_2 | (( output_4_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_4_3 = (bit<32>) output_4_3 | (( output_4_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_4_4 = (bit<32>) output_4_4 | (( output_4_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_4_5 = (bit<32>) output_4_5 | (( output_4_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_5_0 = (bit<32>) output_5_0 | (( output_5_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_5_1 = (bit<32>) output_5_1 | (( output_5_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_5_2 = (bit<32>) output_5_2 | (( output_5_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_5_3 = (bit<32>) output_5_3 | (( output_5_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_5_4 = (bit<32>) output_5_4 | (( output_5_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_5_5 = (bit<32>) output_5_5 | (( output_5_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_6_0 = (bit<32>) output_6_0 | (( output_6_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_6_1 = (bit<32>) output_6_1 | (( output_6_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_6_2 = (bit<32>) output_6_2 | (( output_6_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_6_3 = (bit<32>) output_6_3 | (( output_6_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_6_4 = (bit<32>) output_6_4 | (( output_6_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_6_5 = (bit<32>) output_6_5 | (( output_6_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_7_0 = (bit<32>) output_7_0 | (( output_7_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_7_1 = (bit<32>) output_7_1 | (( output_7_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_7_2 = (bit<32>) output_7_2 | (( output_7_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_7_3 = (bit<32>) output_7_3 | (( output_7_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_7_4 = (bit<32>) output_7_4 | (( output_7_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> output32_7_5 = (bit<32>) output_7_5 | (( output_7_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+
+        bit<16> output16_0_0 = (output32_0_0 *w0_0_0 + output32_0_1 *w0_1_0 + output32_0_2 *w0_2_0 + output32_0_3 *w0_3_0 + output32_0_4 *w0_4_0 + output32_0_5 *w0_5_0)[23:8];
+        bit<16> output16_0_1 = (output32_0_0 *w0_0_1 + output32_0_1 *w0_1_1 + output32_0_2 *w0_2_1 + output32_0_3 *w0_3_1 + output32_0_4 *w0_4_1 + output32_0_5 *w0_5_1)[23:8];
+        bit<16> output16_0_2 = (output32_0_0 *w0_0_2 + output32_0_1 *w0_1_2 + output32_0_2 *w0_2_2 + output32_0_3 *w0_3_2 + output32_0_4 *w0_4_2 + output32_0_5 *w0_5_2)[23:8];
+        bit<16> output16_0_3 = (output32_0_0 *w0_0_3 + output32_0_1 *w0_1_3 + output32_0_2 *w0_2_3 + output32_0_3 *w0_3_3 + output32_0_4 *w0_4_3 + output32_0_5 *w0_5_3)[23:8];
+        bit<16> output16_0_4 = (output32_0_0 *w0_0_4 + output32_0_1 *w0_1_4 + output32_0_2 *w0_2_4 + output32_0_3 *w0_3_4 + output32_0_4 *w0_4_4 + output32_0_5 *w0_5_4)[23:8];
+        bit<16> output16_0_5 = (output32_0_0 *w0_0_5 + output32_0_1 *w0_1_5 + output32_0_2 *w0_2_5 + output32_0_3 *w0_3_5 + output32_0_4 *w0_4_5 + output32_0_5 *w0_5_5)[23:8];
+        bit<16> output16_1_0 = (output32_1_0 *w0_0_0 + output32_1_1 *w0_1_0 + output32_1_2 *w0_2_0 + output32_1_3 *w0_3_0 + output32_1_4 *w0_4_0 + output32_1_5 *w0_5_0)[23:8];
+        bit<16> output16_1_1 = (output32_1_0 *w0_0_1 + output32_1_1 *w0_1_1 + output32_1_2 *w0_2_1 + output32_1_3 *w0_3_1 + output32_1_4 *w0_4_1 + output32_1_5 *w0_5_1)[23:8];
+        bit<16> output16_1_2 = (output32_1_0 *w0_0_2 + output32_1_1 *w0_1_2 + output32_1_2 *w0_2_2 + output32_1_3 *w0_3_2 + output32_1_4 *w0_4_2 + output32_1_5 *w0_5_2)[23:8];
+        bit<16> output16_1_3 = (output32_1_0 *w0_0_3 + output32_1_1 *w0_1_3 + output32_1_2 *w0_2_3 + output32_1_3 *w0_3_3 + output32_1_4 *w0_4_3 + output32_1_5 *w0_5_3)[23:8];
+        bit<16> output16_1_4 = (output32_1_0 *w0_0_4 + output32_1_1 *w0_1_4 + output32_1_2 *w0_2_4 + output32_1_3 *w0_3_4 + output32_1_4 *w0_4_4 + output32_1_5 *w0_5_4)[23:8];
+        bit<16> output16_1_5 = (output32_1_0 *w0_0_5 + output32_1_1 *w0_1_5 + output32_1_2 *w0_2_5 + output32_1_3 *w0_3_5 + output32_1_4 *w0_4_5 + output32_1_5 *w0_5_5)[23:8];
+        bit<16> output16_2_0 = (output32_2_0 *w0_0_0 + output32_2_1 *w0_1_0 + output32_2_2 *w0_2_0 + output32_2_3 *w0_3_0 + output32_2_4 *w0_4_0 + output32_2_5 *w0_5_0)[23:8];
+        bit<16> output16_2_1 = (output32_2_0 *w0_0_1 + output32_2_1 *w0_1_1 + output32_2_2 *w0_2_1 + output32_2_3 *w0_3_1 + output32_2_4 *w0_4_1 + output32_2_5 *w0_5_1)[23:8];
+        bit<16> output16_2_2 = (output32_2_0 *w0_0_2 + output32_2_1 *w0_1_2 + output32_2_2 *w0_2_2 + output32_2_3 *w0_3_2 + output32_2_4 *w0_4_2 + output32_2_5 *w0_5_2)[23:8];
+        bit<16> output16_2_3 = (output32_2_0 *w0_0_3 + output32_2_1 *w0_1_3 + output32_2_2 *w0_2_3 + output32_2_3 *w0_3_3 + output32_2_4 *w0_4_3 + output32_2_5 *w0_5_3)[23:8];
+        bit<16> output16_2_4 = (output32_2_0 *w0_0_4 + output32_2_1 *w0_1_4 + output32_2_2 *w0_2_4 + output32_2_3 *w0_3_4 + output32_2_4 *w0_4_4 + output32_2_5 *w0_5_4)[23:8];
+        bit<16> output16_2_5 = (output32_2_0 *w0_0_5 + output32_2_1 *w0_1_5 + output32_2_2 *w0_2_5 + output32_2_3 *w0_3_5 + output32_2_4 *w0_4_5 + output32_2_5 *w0_5_5)[23:8];
+        bit<16> output16_3_0 = (output32_3_0 *w0_0_0 + output32_3_1 *w0_1_0 + output32_3_2 *w0_2_0 + output32_3_3 *w0_3_0 + output32_3_4 *w0_4_0 + output32_3_5 *w0_5_0)[23:8];
+        bit<16> output16_3_1 = (output32_3_0 *w0_0_1 + output32_3_1 *w0_1_1 + output32_3_2 *w0_2_1 + output32_3_3 *w0_3_1 + output32_3_4 *w0_4_1 + output32_3_5 *w0_5_1)[23:8];
+        bit<16> output16_3_2 = (output32_3_0 *w0_0_2 + output32_3_1 *w0_1_2 + output32_3_2 *w0_2_2 + output32_3_3 *w0_3_2 + output32_3_4 *w0_4_2 + output32_3_5 *w0_5_2)[23:8];
+        bit<16> output16_3_3 = (output32_3_0 *w0_0_3 + output32_3_1 *w0_1_3 + output32_3_2 *w0_2_3 + output32_3_3 *w0_3_3 + output32_3_4 *w0_4_3 + output32_3_5 *w0_5_3)[23:8];
+        bit<16> output16_3_4 = (output32_3_0 *w0_0_4 + output32_3_1 *w0_1_4 + output32_3_2 *w0_2_4 + output32_3_3 *w0_3_4 + output32_3_4 *w0_4_4 + output32_3_5 *w0_5_4)[23:8];
+        bit<16> output16_3_5 = (output32_3_0 *w0_0_5 + output32_3_1 *w0_1_5 + output32_3_2 *w0_2_5 + output32_3_3 *w0_3_5 + output32_3_4 *w0_4_5 + output32_3_5 *w0_5_5)[23:8];
+        bit<16> output16_4_0 = (output32_4_0 *w0_0_0 + output32_4_1 *w0_1_0 + output32_4_2 *w0_2_0 + output32_4_3 *w0_3_0 + output32_4_4 *w0_4_0 + output32_4_5 *w0_5_0)[23:8];
+        bit<16> output16_4_1 = (output32_4_0 *w0_0_1 + output32_4_1 *w0_1_1 + output32_4_2 *w0_2_1 + output32_4_3 *w0_3_1 + output32_4_4 *w0_4_1 + output32_4_5 *w0_5_1)[23:8];
+        bit<16> output16_4_2 = (output32_4_0 *w0_0_2 + output32_4_1 *w0_1_2 + output32_4_2 *w0_2_2 + output32_4_3 *w0_3_2 + output32_4_4 *w0_4_2 + output32_4_5 *w0_5_2)[23:8];
+        bit<16> output16_4_3 = (output32_4_0 *w0_0_3 + output32_4_1 *w0_1_3 + output32_4_2 *w0_2_3 + output32_4_3 *w0_3_3 + output32_4_4 *w0_4_3 + output32_4_5 *w0_5_3)[23:8];
+        bit<16> output16_4_4 = (output32_4_0 *w0_0_4 + output32_4_1 *w0_1_4 + output32_4_2 *w0_2_4 + output32_4_3 *w0_3_4 + output32_4_4 *w0_4_4 + output32_4_5 *w0_5_4)[23:8];
+        bit<16> output16_4_5 = (output32_4_0 *w0_0_5 + output32_4_1 *w0_1_5 + output32_4_2 *w0_2_5 + output32_4_3 *w0_3_5 + output32_4_4 *w0_4_5 + output32_4_5 *w0_5_5)[23:8];
+        bit<16> output16_5_0 = (output32_5_0 *w0_0_0 + output32_5_1 *w0_1_0 + output32_5_2 *w0_2_0 + output32_5_3 *w0_3_0 + output32_5_4 *w0_4_0 + output32_5_5 *w0_5_0)[23:8];
+        bit<16> output16_5_1 = (output32_5_0 *w0_0_1 + output32_5_1 *w0_1_1 + output32_5_2 *w0_2_1 + output32_5_3 *w0_3_1 + output32_5_4 *w0_4_1 + output32_5_5 *w0_5_1)[23:8];
+        bit<16> output16_5_2 = (output32_5_0 *w0_0_2 + output32_5_1 *w0_1_2 + output32_5_2 *w0_2_2 + output32_5_3 *w0_3_2 + output32_5_4 *w0_4_2 + output32_5_5 *w0_5_2)[23:8];
+        bit<16> output16_5_3 = (output32_5_0 *w0_0_3 + output32_5_1 *w0_1_3 + output32_5_2 *w0_2_3 + output32_5_3 *w0_3_3 + output32_5_4 *w0_4_3 + output32_5_5 *w0_5_3)[23:8];
+        bit<16> output16_5_4 = (output32_5_0 *w0_0_4 + output32_5_1 *w0_1_4 + output32_5_2 *w0_2_4 + output32_5_3 *w0_3_4 + output32_5_4 *w0_4_4 + output32_5_5 *w0_5_4)[23:8];
+        bit<16> output16_5_5 = (output32_5_0 *w0_0_5 + output32_5_1 *w0_1_5 + output32_5_2 *w0_2_5 + output32_5_3 *w0_3_5 + output32_5_4 *w0_4_5 + output32_5_5 *w0_5_5)[23:8];
+        bit<16> output16_6_0 = (output32_6_0 *w0_0_0 + output32_6_1 *w0_1_0 + output32_6_2 *w0_2_0 + output32_6_3 *w0_3_0 + output32_6_4 *w0_4_0 + output32_6_5 *w0_5_0)[23:8];
+        bit<16> output16_6_1 = (output32_6_0 *w0_0_1 + output32_6_1 *w0_1_1 + output32_6_2 *w0_2_1 + output32_6_3 *w0_3_1 + output32_6_4 *w0_4_1 + output32_6_5 *w0_5_1)[23:8];
+        bit<16> output16_6_2 = (output32_6_0 *w0_0_2 + output32_6_1 *w0_1_2 + output32_6_2 *w0_2_2 + output32_6_3 *w0_3_2 + output32_6_4 *w0_4_2 + output32_6_5 *w0_5_2)[23:8];
+        bit<16> output16_6_3 = (output32_6_0 *w0_0_3 + output32_6_1 *w0_1_3 + output32_6_2 *w0_2_3 + output32_6_3 *w0_3_3 + output32_6_4 *w0_4_3 + output32_6_5 *w0_5_3)[23:8];
+        bit<16> output16_6_4 = (output32_6_0 *w0_0_4 + output32_6_1 *w0_1_4 + output32_6_2 *w0_2_4 + output32_6_3 *w0_3_4 + output32_6_4 *w0_4_4 + output32_6_5 *w0_5_4)[23:8];
+        bit<16> output16_6_5 = (output32_6_0 *w0_0_5 + output32_6_1 *w0_1_5 + output32_6_2 *w0_2_5 + output32_6_3 *w0_3_5 + output32_6_4 *w0_4_5 + output32_6_5 *w0_5_5)[23:8];
+        bit<16> output16_7_0 = (output32_7_0 *w0_0_0 + output32_7_1 *w0_1_0 + output32_7_2 *w0_2_0 + output32_7_3 *w0_3_0 + output32_7_4 *w0_4_0 + output32_7_5 *w0_5_0)[23:8];
+        bit<16> output16_7_1 = (output32_7_0 *w0_0_1 + output32_7_1 *w0_1_1 + output32_7_2 *w0_2_1 + output32_7_3 *w0_3_1 + output32_7_4 *w0_4_1 + output32_7_5 *w0_5_1)[23:8];
+        bit<16> output16_7_2 = (output32_7_0 *w0_0_2 + output32_7_1 *w0_1_2 + output32_7_2 *w0_2_2 + output32_7_3 *w0_3_2 + output32_7_4 *w0_4_2 + output32_7_5 *w0_5_2)[23:8];
+        bit<16> output16_7_3 = (output32_7_0 *w0_0_3 + output32_7_1 *w0_1_3 + output32_7_2 *w0_2_3 + output32_7_3 *w0_3_3 + output32_7_4 *w0_4_3 + output32_7_5 *w0_5_3)[23:8];
+        bit<16> output16_7_4 = (output32_7_0 *w0_0_4 + output32_7_1 *w0_1_4 + output32_7_2 *w0_2_4 + output32_7_3 *w0_3_4 + output32_7_4 *w0_4_4 + output32_7_5 *w0_5_4)[23:8];
+        bit<16> output16_7_5 = (output32_7_0 *w0_0_5 + output32_7_1 *w0_1_5 + output32_7_2 *w0_2_5 + output32_7_3 *w0_3_5 + output32_7_4 *w0_4_5 + output32_7_5 *w0_5_5)[23:8];
+        
+
         // 残差连接，结果放在hdr.s1_output0_calc里
-        hdr.s0_output0_calc.s0_output_0_0 = output_0_0 + hdr.s0_output0_calc.s0_output_0_0;
-        hdr.s0_output0_calc.s0_output_0_1 = output_0_1 + hdr.s0_output0_calc.s0_output_0_1;
-        hdr.s0_output0_calc.s0_output_0_2 = output_0_2 + hdr.s0_output0_calc.s0_output_0_2;
-        hdr.s0_output0_calc.s0_output_0_3 = output_0_3 + hdr.s0_output0_calc.s0_output_0_3;
-        hdr.s0_output0_calc.s0_output_0_4 = output_0_4 + hdr.s0_output0_calc.s0_output_0_4;
-        hdr.s0_output0_calc.s0_output_0_5 = output_0_5 + hdr.s0_output0_calc.s0_output_0_5;
-        hdr.s0_output0_calc.s0_output_1_0 = output_1_0 + hdr.s0_output0_calc.s0_output_1_0;
-        hdr.s0_output0_calc.s0_output_1_1 = output_1_1 + hdr.s0_output0_calc.s0_output_1_1;
-        hdr.s0_output0_calc.s0_output_1_2 = output_1_2 + hdr.s0_output0_calc.s0_output_1_2;
-        hdr.s0_output0_calc.s0_output_1_3 = output_1_3 + hdr.s0_output0_calc.s0_output_1_3;
-        hdr.s0_output0_calc.s0_output_1_4 = output_1_4 + hdr.s0_output0_calc.s0_output_1_4;
-        hdr.s0_output0_calc.s0_output_1_5 = output_1_5 + hdr.s0_output0_calc.s0_output_1_5;
-        hdr.s0_output0_calc.s0_output_2_0 = output_2_0 + hdr.s0_output0_calc.s0_output_2_0;
-        hdr.s0_output0_calc.s0_output_2_1 = output_2_1 + hdr.s0_output0_calc.s0_output_2_1;
-        hdr.s0_output0_calc.s0_output_2_2 = output_2_2 + hdr.s0_output0_calc.s0_output_2_2;
-        hdr.s0_output0_calc.s0_output_2_3 = output_2_3 + hdr.s0_output0_calc.s0_output_2_3;
-        hdr.s0_output0_calc.s0_output_2_4 = output_2_4 + hdr.s0_output0_calc.s0_output_2_4;
-        hdr.s0_output0_calc.s0_output_2_5 = output_2_5 + hdr.s0_output0_calc.s0_output_2_5;
-        hdr.s0_output0_calc.s0_output_3_0 = output_3_0 + hdr.s0_output0_calc.s0_output_3_0;
-        hdr.s0_output0_calc.s0_output_3_1 = output_3_1 + hdr.s0_output0_calc.s0_output_3_1;
-        hdr.s0_output0_calc.s0_output_3_2 = output_3_2 + hdr.s0_output0_calc.s0_output_3_2;
-        hdr.s0_output0_calc.s0_output_3_3 = output_3_3 + hdr.s0_output0_calc.s0_output_3_3;
-        hdr.s0_output0_calc.s0_output_3_4 = output_3_4 + hdr.s0_output0_calc.s0_output_3_4;
-        hdr.s0_output0_calc.s0_output_3_5 = output_3_5 + hdr.s0_output0_calc.s0_output_3_5;
-        hdr.s0_output0_calc.s0_output_4_0 = output_4_0 + hdr.s0_output0_calc.s0_output_4_0;
-        hdr.s0_output0_calc.s0_output_4_1 = output_4_1 + hdr.s0_output0_calc.s0_output_4_1;
-        hdr.s0_output0_calc.s0_output_4_2 = output_4_2 + hdr.s0_output0_calc.s0_output_4_2;
-        hdr.s0_output0_calc.s0_output_4_3 = output_4_3 + hdr.s0_output0_calc.s0_output_4_3;
-        hdr.s0_output0_calc.s0_output_4_4 = output_4_4 + hdr.s0_output0_calc.s0_output_4_4;
-        hdr.s0_output0_calc.s0_output_4_5 = output_4_5 + hdr.s0_output0_calc.s0_output_4_5;
-        hdr.s0_output0_calc.s0_output_5_0 = output_5_0 + hdr.s0_output0_calc.s0_output_5_0;
-        hdr.s0_output0_calc.s0_output_5_1 = output_5_1 + hdr.s0_output0_calc.s0_output_5_1;
-        hdr.s0_output0_calc.s0_output_5_2 = output_5_2 + hdr.s0_output0_calc.s0_output_5_2;
-        hdr.s0_output0_calc.s0_output_5_3 = output_5_3 + hdr.s0_output0_calc.s0_output_5_3;
-        hdr.s0_output0_calc.s0_output_5_4 = output_5_4 + hdr.s0_output0_calc.s0_output_5_4;
-        hdr.s0_output0_calc.s0_output_5_5 = output_5_5 + hdr.s0_output0_calc.s0_output_5_5;
-        hdr.s0_output0_calc.s0_output_6_0 = output_6_0 + hdr.s0_output0_calc.s0_output_6_0;
-        hdr.s0_output0_calc.s0_output_6_1 = output_6_1 + hdr.s0_output0_calc.s0_output_6_1;
-        hdr.s0_output0_calc.s0_output_6_2 = output_6_2 + hdr.s0_output0_calc.s0_output_6_2;
-        hdr.s0_output0_calc.s0_output_6_3 = output_6_3 + hdr.s0_output0_calc.s0_output_6_3;
-        hdr.s0_output0_calc.s0_output_6_4 = output_6_4 + hdr.s0_output0_calc.s0_output_6_4;
-        hdr.s0_output0_calc.s0_output_6_5 = output_6_5 + hdr.s0_output0_calc.s0_output_6_5;
-        hdr.s0_output0_calc.s0_output_7_0 = output_7_0 + hdr.s0_output0_calc.s0_output_7_0;
-        hdr.s0_output0_calc.s0_output_7_1 = output_7_1 + hdr.s0_output0_calc.s0_output_7_1;
-        hdr.s0_output0_calc.s0_output_7_2 = output_7_2 + hdr.s0_output0_calc.s0_output_7_2;
-        hdr.s0_output0_calc.s0_output_7_3 = output_7_3 + hdr.s0_output0_calc.s0_output_7_3;
-        hdr.s0_output0_calc.s0_output_7_4 = output_7_4 + hdr.s0_output0_calc.s0_output_7_4;
-        hdr.s0_output0_calc.s0_output_7_5 = output_7_5 + hdr.s0_output0_calc.s0_output_7_5;
+        hdr.s0_output0_calc.s0_output_0_0 = output16_0_0 + hdr.s0_output0_calc.s0_output_0_0;
+        hdr.s0_output0_calc.s0_output_0_1 = output16_0_1 + hdr.s0_output0_calc.s0_output_0_1;
+        hdr.s0_output0_calc.s0_output_0_2 = output16_0_2 + hdr.s0_output0_calc.s0_output_0_2;
+        hdr.s0_output0_calc.s0_output_0_3 = output16_0_3 + hdr.s0_output0_calc.s0_output_0_3;
+        hdr.s0_output0_calc.s0_output_0_4 = output16_0_4 + hdr.s0_output0_calc.s0_output_0_4;
+        hdr.s0_output0_calc.s0_output_0_5 = output16_0_5 + hdr.s0_output0_calc.s0_output_0_5;
+        hdr.s0_output0_calc.s0_output_1_0 = output16_1_0 + hdr.s0_output0_calc.s0_output_1_0;
+        hdr.s0_output0_calc.s0_output_1_1 = output16_1_1 + hdr.s0_output0_calc.s0_output_1_1;
+        hdr.s0_output0_calc.s0_output_1_2 = output16_1_2 + hdr.s0_output0_calc.s0_output_1_2;
+        hdr.s0_output0_calc.s0_output_1_3 = output16_1_3 + hdr.s0_output0_calc.s0_output_1_3;
+        hdr.s0_output0_calc.s0_output_1_4 = output16_1_4 + hdr.s0_output0_calc.s0_output_1_4;
+        hdr.s0_output0_calc.s0_output_1_5 = output16_1_5 + hdr.s0_output0_calc.s0_output_1_5;
+        hdr.s0_output0_calc.s0_output_2_0 = output16_2_0 + hdr.s0_output0_calc.s0_output_2_0;
+        hdr.s0_output0_calc.s0_output_2_1 = output16_2_1 + hdr.s0_output0_calc.s0_output_2_1;
+        hdr.s0_output0_calc.s0_output_2_2 = output16_2_2 + hdr.s0_output0_calc.s0_output_2_2;
+        hdr.s0_output0_calc.s0_output_2_3 = output16_2_3 + hdr.s0_output0_calc.s0_output_2_3;
+        hdr.s0_output0_calc.s0_output_2_4 = output16_2_4 + hdr.s0_output0_calc.s0_output_2_4;
+        hdr.s0_output0_calc.s0_output_2_5 = output16_2_5 + hdr.s0_output0_calc.s0_output_2_5;
+        hdr.s0_output0_calc.s0_output_3_0 = output16_3_0 + hdr.s0_output0_calc.s0_output_3_0;
+        hdr.s0_output0_calc.s0_output_3_1 = output16_3_1 + hdr.s0_output0_calc.s0_output_3_1;
+        hdr.s0_output0_calc.s0_output_3_2 = output16_3_2 + hdr.s0_output0_calc.s0_output_3_2;
+        hdr.s0_output0_calc.s0_output_3_3 = output16_3_3 + hdr.s0_output0_calc.s0_output_3_3;
+        hdr.s0_output0_calc.s0_output_3_4 = output16_3_4 + hdr.s0_output0_calc.s0_output_3_4;
+        hdr.s0_output0_calc.s0_output_3_5 = output16_3_5 + hdr.s0_output0_calc.s0_output_3_5;
+        hdr.s0_output0_calc.s0_output_4_0 = output16_4_0 + hdr.s0_output0_calc.s0_output_4_0;
+        hdr.s0_output0_calc.s0_output_4_1 = output16_4_1 + hdr.s0_output0_calc.s0_output_4_1;
+        hdr.s0_output0_calc.s0_output_4_2 = output16_4_2 + hdr.s0_output0_calc.s0_output_4_2;
+        hdr.s0_output0_calc.s0_output_4_3 = output16_4_3 + hdr.s0_output0_calc.s0_output_4_3;
+        hdr.s0_output0_calc.s0_output_4_4 = output16_4_4 + hdr.s0_output0_calc.s0_output_4_4;
+        hdr.s0_output0_calc.s0_output_4_5 = output16_4_5 + hdr.s0_output0_calc.s0_output_4_5;
+        hdr.s0_output0_calc.s0_output_5_0 = output16_5_0 + hdr.s0_output0_calc.s0_output_5_0;
+        hdr.s0_output0_calc.s0_output_5_1 = output16_5_1 + hdr.s0_output0_calc.s0_output_5_1;
+        hdr.s0_output0_calc.s0_output_5_2 = output16_5_2 + hdr.s0_output0_calc.s0_output_5_2;
+        hdr.s0_output0_calc.s0_output_5_3 = output16_5_3 + hdr.s0_output0_calc.s0_output_5_3;
+        hdr.s0_output0_calc.s0_output_5_4 = output16_5_4 + hdr.s0_output0_calc.s0_output_5_4;
+        hdr.s0_output0_calc.s0_output_5_5 = output16_5_5 + hdr.s0_output0_calc.s0_output_5_5;
+        hdr.s0_output0_calc.s0_output_6_0 = output16_6_0 + hdr.s0_output0_calc.s0_output_6_0;
+        hdr.s0_output0_calc.s0_output_6_1 = output16_6_1 + hdr.s0_output0_calc.s0_output_6_1;
+        hdr.s0_output0_calc.s0_output_6_2 = output16_6_2 + hdr.s0_output0_calc.s0_output_6_2;
+        hdr.s0_output0_calc.s0_output_6_3 = output16_6_3 + hdr.s0_output0_calc.s0_output_6_3;
+        hdr.s0_output0_calc.s0_output_6_4 = output16_6_4 + hdr.s0_output0_calc.s0_output_6_4;
+        hdr.s0_output0_calc.s0_output_6_5 = output16_6_5 + hdr.s0_output0_calc.s0_output_6_5;
+        hdr.s0_output0_calc.s0_output_7_0 = output16_7_0 + hdr.s0_output0_calc.s0_output_7_0;
+        hdr.s0_output0_calc.s0_output_7_1 = output16_7_1 + hdr.s0_output0_calc.s0_output_7_1;
+        hdr.s0_output0_calc.s0_output_7_2 = output16_7_2 + hdr.s0_output0_calc.s0_output_7_2;
+        hdr.s0_output0_calc.s0_output_7_3 = output16_7_3 + hdr.s0_output0_calc.s0_output_7_3;
+        hdr.s0_output0_calc.s0_output_7_4 = output16_7_4 + hdr.s0_output0_calc.s0_output_7_4;
+        hdr.s0_output0_calc.s0_output_7_5 = output16_7_5 + hdr.s0_output0_calc.s0_output_7_5;
 
 
         /*
@@ -830,12 +1081,396 @@ control MyIngress(inout headers hdr,
         }
     }
 
+    action operation_calc_mean_var() {
+        const bit<16> number_six = 43; // 43/256 = 0.16796875，非常接近实际值1/6 = 0.16666667
+        bit<16> sum0 = hdr.s0_output0_calc.s0_output_0_0 + hdr.s0_output0_calc.s0_output_0_1 + hdr.s0_output0_calc.s0_output_0_2 + hdr.s0_output0_calc.s0_output_0_3 + hdr.s0_output0_calc.s0_output_0_4 + hdr.s0_output0_calc.s0_output_0_5;
+        bit<16> sum1 = hdr.s0_output0_calc.s0_output_1_0 + hdr.s0_output0_calc.s0_output_1_1 + hdr.s0_output0_calc.s0_output_1_2 + hdr.s0_output0_calc.s0_output_1_3 + hdr.s0_output0_calc.s0_output_1_4 + hdr.s0_output0_calc.s0_output_1_5;
+        bit<16> sum2 = hdr.s0_output0_calc.s0_output_2_0 + hdr.s0_output0_calc.s0_output_2_1 + hdr.s0_output0_calc.s0_output_2_2 + hdr.s0_output0_calc.s0_output_2_3 + hdr.s0_output0_calc.s0_output_2_4 + hdr.s0_output0_calc.s0_output_2_5;
+        bit<16> sum3 = hdr.s0_output0_calc.s0_output_3_0 + hdr.s0_output0_calc.s0_output_3_1 + hdr.s0_output0_calc.s0_output_3_2 + hdr.s0_output0_calc.s0_output_3_3 + hdr.s0_output0_calc.s0_output_3_4 + hdr.s0_output0_calc.s0_output_3_5;
+        bit<16> sum4 = hdr.s0_output0_calc.s0_output_4_0 + hdr.s0_output0_calc.s0_output_4_1 + hdr.s0_output0_calc.s0_output_4_2 + hdr.s0_output0_calc.s0_output_4_3 + hdr.s0_output0_calc.s0_output_4_4 + hdr.s0_output0_calc.s0_output_4_5;
+        bit<16> sum5 = hdr.s0_output0_calc.s0_output_5_0 + hdr.s0_output0_calc.s0_output_5_1 + hdr.s0_output0_calc.s0_output_5_2 + hdr.s0_output0_calc.s0_output_5_3 + hdr.s0_output0_calc.s0_output_5_4 + hdr.s0_output0_calc.s0_output_5_5;
+        bit<16> sum6 = hdr.s0_output0_calc.s0_output_6_0 + hdr.s0_output0_calc.s0_output_6_1 + hdr.s0_output0_calc.s0_output_6_2 + hdr.s0_output0_calc.s0_output_6_3 + hdr.s0_output0_calc.s0_output_6_4 + hdr.s0_output0_calc.s0_output_6_5;
+        bit<16> sum7 = hdr.s0_output0_calc.s0_output_7_0 + hdr.s0_output0_calc.s0_output_7_1 + hdr.s0_output0_calc.s0_output_7_2 + hdr.s0_output0_calc.s0_output_7_3 + hdr.s0_output0_calc.s0_output_7_4 + hdr.s0_output0_calc.s0_output_7_5;
+
+        bit<16> mean0 = sum0*number_six;
+        bit<16> mean1 = sum1*number_six;
+        bit<16> mean2 = sum2*number_six;
+        bit<16> mean3 = sum3*number_six;
+        bit<16> mean4 = sum4*number_six;
+        bit<16> mean5 = sum5*number_six;
+        bit<16> mean6 = sum6*number_six;
+        bit<16> mean7 = sum7*number_six;
+        
+        // 求与均值的偏差
+        meta.deviation_0_0 = hdr.s0_output0_calc.s0_output_0_0 - mean0;
+        meta.deviation_0_1 = hdr.s0_output0_calc.s0_output_0_1 - mean0;
+        meta.deviation_0_2 = hdr.s0_output0_calc.s0_output_0_2 - mean0;
+        meta.deviation_0_3 = hdr.s0_output0_calc.s0_output_0_3 - mean0;
+        meta.deviation_0_4 = hdr.s0_output0_calc.s0_output_0_4 - mean0;
+        meta.deviation_0_5 = hdr.s0_output0_calc.s0_output_0_5 - mean0;
+        meta.deviation_1_0 = hdr.s0_output0_calc.s0_output_1_0 - mean1;
+        meta.deviation_1_1 = hdr.s0_output0_calc.s0_output_1_1 - mean1;
+        meta.deviation_1_2 = hdr.s0_output0_calc.s0_output_1_2 - mean1;
+        meta.deviation_1_3 = hdr.s0_output0_calc.s0_output_1_3 - mean1;
+        meta.deviation_1_4 = hdr.s0_output0_calc.s0_output_1_4 - mean1;
+        meta.deviation_1_5 = hdr.s0_output0_calc.s0_output_1_5 - mean1;
+        meta.deviation_2_0 = hdr.s0_output0_calc.s0_output_2_0 - mean2;
+        meta.deviation_2_1 = hdr.s0_output0_calc.s0_output_2_1 - mean2;
+        meta.deviation_2_2 = hdr.s0_output0_calc.s0_output_2_2 - mean2;
+        meta.deviation_2_3 = hdr.s0_output0_calc.s0_output_2_3 - mean2;
+        meta.deviation_2_4 = hdr.s0_output0_calc.s0_output_2_4 - mean2;
+        meta.deviation_2_5 = hdr.s0_output0_calc.s0_output_2_5 - mean2;
+        meta.deviation_3_0 = hdr.s0_output0_calc.s0_output_3_0 - mean3;
+        meta.deviation_3_1 = hdr.s0_output0_calc.s0_output_3_1 - mean3;
+        meta.deviation_3_2 = hdr.s0_output0_calc.s0_output_3_2 - mean3;
+        meta.deviation_3_3 = hdr.s0_output0_calc.s0_output_3_3 - mean3;
+        meta.deviation_3_4 = hdr.s0_output0_calc.s0_output_3_4 - mean3;
+        meta.deviation_3_5 = hdr.s0_output0_calc.s0_output_3_5 - mean3;
+        meta.deviation_4_0 = hdr.s0_output0_calc.s0_output_4_0 - mean4;
+        meta.deviation_4_1 = hdr.s0_output0_calc.s0_output_4_1 - mean4;
+        meta.deviation_4_2 = hdr.s0_output0_calc.s0_output_4_2 - mean4;
+        meta.deviation_4_3 = hdr.s0_output0_calc.s0_output_4_3 - mean4;
+        meta.deviation_4_4 = hdr.s0_output0_calc.s0_output_4_4 - mean4;
+        meta.deviation_4_5 = hdr.s0_output0_calc.s0_output_4_5 - mean4;
+        meta.deviation_5_0 = hdr.s0_output0_calc.s0_output_5_0 - mean5;
+        meta.deviation_5_1 = hdr.s0_output0_calc.s0_output_5_1 - mean5;
+        meta.deviation_5_2 = hdr.s0_output0_calc.s0_output_5_2 - mean5;
+        meta.deviation_5_3 = hdr.s0_output0_calc.s0_output_5_3 - mean5;
+        meta.deviation_5_4 = hdr.s0_output0_calc.s0_output_5_4 - mean5;
+        meta.deviation_5_5 = hdr.s0_output0_calc.s0_output_5_5 - mean5;
+        meta.deviation_6_0 = hdr.s0_output0_calc.s0_output_6_0 - mean6;
+        meta.deviation_6_1 = hdr.s0_output0_calc.s0_output_6_1 - mean6;
+        meta.deviation_6_2 = hdr.s0_output0_calc.s0_output_6_2 - mean6;
+        meta.deviation_6_3 = hdr.s0_output0_calc.s0_output_6_3 - mean6;
+        meta.deviation_6_4 = hdr.s0_output0_calc.s0_output_6_4 - mean6;
+        meta.deviation_6_5 = hdr.s0_output0_calc.s0_output_6_5 - mean6;
+        meta.deviation_7_0 = hdr.s0_output0_calc.s0_output_7_0 - mean7;
+        meta.deviation_7_1 = hdr.s0_output0_calc.s0_output_7_1 - mean7;
+        meta.deviation_7_2 = hdr.s0_output0_calc.s0_output_7_2 - mean7;
+        meta.deviation_7_3 = hdr.s0_output0_calc.s0_output_7_3 - mean7;
+        meta.deviation_7_4 = hdr.s0_output0_calc.s0_output_7_4 - mean7;
+        meta.deviation_7_5 = hdr.s0_output0_calc.s0_output_7_5 - mean7;
+        
+        // 偏差16位->32位
+        bit<32> deviation_0_0 = (bit<32>) meta.deviation_0_0 | (( meta.deviation_0_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_0_1 = (bit<32>) meta.deviation_0_1 | (( meta.deviation_0_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_0_2 = (bit<32>) meta.deviation_0_2 | (( meta.deviation_0_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_0_3 = (bit<32>) meta.deviation_0_3 | (( meta.deviation_0_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_0_4 = (bit<32>) meta.deviation_0_4 | (( meta.deviation_0_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_0_5 = (bit<32>) meta.deviation_0_5 | (( meta.deviation_0_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_1_0 = (bit<32>) meta.deviation_1_0 | (( meta.deviation_1_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_1_1 = (bit<32>) meta.deviation_1_1 | (( meta.deviation_1_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_1_2 = (bit<32>) meta.deviation_1_2 | (( meta.deviation_1_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_1_3 = (bit<32>) meta.deviation_1_3 | (( meta.deviation_1_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_1_4 = (bit<32>) meta.deviation_1_4 | (( meta.deviation_1_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_1_5 = (bit<32>) meta.deviation_1_5 | (( meta.deviation_1_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_2_0 = (bit<32>) meta.deviation_2_0 | (( meta.deviation_2_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_2_1 = (bit<32>) meta.deviation_2_1 | (( meta.deviation_2_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_2_2 = (bit<32>) meta.deviation_2_2 | (( meta.deviation_2_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_2_3 = (bit<32>) meta.deviation_2_3 | (( meta.deviation_2_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_2_4 = (bit<32>) meta.deviation_2_4 | (( meta.deviation_2_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_2_5 = (bit<32>) meta.deviation_2_5 | (( meta.deviation_2_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_3_0 = (bit<32>) meta.deviation_3_0 | (( meta.deviation_3_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_3_1 = (bit<32>) meta.deviation_3_1 | (( meta.deviation_3_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_3_2 = (bit<32>) meta.deviation_3_2 | (( meta.deviation_3_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_3_3 = (bit<32>) meta.deviation_3_3 | (( meta.deviation_3_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_3_4 = (bit<32>) meta.deviation_3_4 | (( meta.deviation_3_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_3_5 = (bit<32>) meta.deviation_3_5 | (( meta.deviation_3_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_4_0 = (bit<32>) meta.deviation_4_0 | (( meta.deviation_4_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_4_1 = (bit<32>) meta.deviation_4_1 | (( meta.deviation_4_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_4_2 = (bit<32>) meta.deviation_4_2 | (( meta.deviation_4_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_4_3 = (bit<32>) meta.deviation_4_3 | (( meta.deviation_4_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_4_4 = (bit<32>) meta.deviation_4_4 | (( meta.deviation_4_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_4_5 = (bit<32>) meta.deviation_4_5 | (( meta.deviation_4_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_5_0 = (bit<32>) meta.deviation_5_0 | (( meta.deviation_5_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_5_1 = (bit<32>) meta.deviation_5_1 | (( meta.deviation_5_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_5_2 = (bit<32>) meta.deviation_5_2 | (( meta.deviation_5_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_5_3 = (bit<32>) meta.deviation_5_3 | (( meta.deviation_5_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_5_4 = (bit<32>) meta.deviation_5_4 | (( meta.deviation_5_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_5_5 = (bit<32>) meta.deviation_5_5 | (( meta.deviation_5_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_6_0 = (bit<32>) meta.deviation_6_0 | (( meta.deviation_6_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_6_1 = (bit<32>) meta.deviation_6_1 | (( meta.deviation_6_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_6_2 = (bit<32>) meta.deviation_6_2 | (( meta.deviation_6_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_6_3 = (bit<32>) meta.deviation_6_3 | (( meta.deviation_6_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_6_4 = (bit<32>) meta.deviation_6_4 | (( meta.deviation_6_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_6_5 = (bit<32>) meta.deviation_6_5 | (( meta.deviation_6_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_7_0 = (bit<32>) meta.deviation_7_0 | (( meta.deviation_7_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_7_1 = (bit<32>) meta.deviation_7_1 | (( meta.deviation_7_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_7_2 = (bit<32>) meta.deviation_7_2 | (( meta.deviation_7_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_7_3 = (bit<32>) meta.deviation_7_3 | (( meta.deviation_7_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_7_4 = (bit<32>) meta.deviation_7_4 | (( meta.deviation_7_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_7_5 = (bit<32>) meta.deviation_7_5 | (( meta.deviation_7_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+
+        meta.variance0 = (deviation_0_0 * deviation_0_0 + deviation_0_1 * deviation_0_1 + deviation_0_2 * deviation_0_2 + deviation_0_3 * deviation_0_3 + deviation_0_4 * deviation_0_4 + deviation_0_5 * deviation_0_5)[23:8];
+        meta.variance1 = (deviation_1_0 * deviation_1_0 + deviation_1_1 * deviation_1_1 + deviation_1_2 * deviation_1_2 + deviation_1_3 * deviation_1_3 + deviation_1_4 * deviation_1_4 + deviation_1_5 * deviation_1_5)[23:8];
+        meta.variance2 = (deviation_2_0 * deviation_2_0 + deviation_2_1 * deviation_2_1 + deviation_2_2 * deviation_2_2 + deviation_2_3 * deviation_2_3 + deviation_2_4 * deviation_2_4 + deviation_2_5 * deviation_2_5)[23:8];
+        meta.variance3 = (deviation_3_0 * deviation_3_0 + deviation_3_1 * deviation_3_1 + deviation_3_2 * deviation_3_2 + deviation_3_3 * deviation_3_3 + deviation_3_4 * deviation_3_4 + deviation_3_5 * deviation_3_5)[23:8];
+        meta.variance4 = (deviation_4_0 * deviation_4_0 + deviation_4_1 * deviation_4_1 + deviation_4_2 * deviation_4_2 + deviation_4_3 * deviation_4_3 + deviation_4_4 * deviation_4_4 + deviation_4_5 * deviation_4_5)[23:8];
+        meta.variance5 = (deviation_5_0 * deviation_5_0 + deviation_5_1 * deviation_5_1 + deviation_5_2 * deviation_5_2 + deviation_5_3 * deviation_5_3 + deviation_5_4 * deviation_5_4 + deviation_5_5 * deviation_5_5)[23:8];
+        meta.variance6 = (deviation_6_0 * deviation_6_0 + deviation_6_1 * deviation_6_1 + deviation_6_2 * deviation_6_2 + deviation_6_3 * deviation_6_3 + deviation_6_4 * deviation_6_4 + deviation_6_5 * deviation_6_5)[23:8];
+        meta.variance7 = (deviation_7_0 * deviation_7_0 + deviation_7_1 * deviation_7_1 + deviation_7_2 * deviation_7_2 + deviation_7_3 * deviation_7_3 + deviation_7_4 * deviation_7_4 + deviation_7_5 * deviation_7_5)[23:8];
+    }
+
+    // 下面用表项匹配1/sqrt(var(x))，这里只是演示，对整数部分开根号，因为小数部分开根号的值影响不大
+    action operation_inv_sqrt_var0(bit<16> inv_sqrt_var0) {
+        meta.inv_sqrt_var0 = inv_sqrt_var0;
+    }
+
+    table calc_inv_sqrt_var0 {
+        key = { 
+            meta.variance0 : ternary;
+        }
+        actions = { 
+            operation_inv_sqrt_var0;
+            operation_drop;
+        }
+        default_action = operation_drop();
+        size = 256;
+    }
+    
+    action operation_inv_sqrt_var1(bit<16> inv_sqrt_var1) {
+        meta.inv_sqrt_var1 = inv_sqrt_var1;
+    }
+
+    table calc_inv_sqrt_var1 {
+        key = { 
+            meta.variance1 : ternary;
+        }
+        actions = { 
+            operation_inv_sqrt_var1;
+            operation_drop;
+        }
+        default_action = operation_drop();
+        size = 256;
+    }
+    
+    action operation_inv_sqrt_var2(bit<16> inv_sqrt_var2) {
+        meta.inv_sqrt_var2 = inv_sqrt_var2;
+    }
+
+    table calc_inv_sqrt_var2 {
+        key = { 
+            meta.variance2 : ternary;
+        }
+        actions = { 
+            operation_inv_sqrt_var2;
+            operation_drop;
+        }
+        default_action = operation_drop();
+        size = 256;
+    }
+    
+    action operation_inv_sqrt_var3(bit<16> inv_sqrt_var3) {
+        meta.inv_sqrt_var3 = inv_sqrt_var3;
+    }
+
+    table calc_inv_sqrt_var3 {
+        key = { 
+            meta.variance3 : ternary;
+        }
+        actions = { 
+            operation_inv_sqrt_var3;
+            operation_drop;
+        }
+        default_action = operation_drop();
+        size = 256;
+    }
+    
+    action operation_inv_sqrt_var4(bit<16> inv_sqrt_var4) {
+        meta.inv_sqrt_var4 = inv_sqrt_var4;
+    }
+
+    table calc_inv_sqrt_var4 {
+        key = { 
+            meta.variance4 : ternary;
+        }
+        actions = { 
+            operation_inv_sqrt_var4;
+            operation_drop;
+        }
+        default_action = operation_drop();
+        size = 256;
+    }
+    
+    action operation_inv_sqrt_var5(bit<16> inv_sqrt_var5) {
+        meta.inv_sqrt_var5 = inv_sqrt_var5;
+    }
+
+    table calc_inv_sqrt_var5 {
+        key = { 
+            meta.variance5 : ternary;
+        }
+        actions = { 
+            operation_inv_sqrt_var5;
+            operation_drop;
+        }
+        default_action = operation_drop();
+        size = 256;
+    }
+    
+    action operation_inv_sqrt_var6(bit<16> inv_sqrt_var6) {
+        meta.inv_sqrt_var6 = inv_sqrt_var6;
+    }
+
+    table calc_inv_sqrt_var6 {
+        key = { 
+            meta.variance6 : ternary;
+        }
+        actions = { 
+            operation_inv_sqrt_var6;
+            operation_drop;
+        }
+        default_action = operation_drop();
+        size = 256;
+    }
+    
+    action operation_inv_sqrt_var7(bit<16> inv_sqrt_var7) {
+        meta.inv_sqrt_var7 = inv_sqrt_var7;
+    }
+
+    table calc_inv_sqrt_var7 {
+        key = { 
+            meta.variance7 : ternary;
+        }
+        actions = { 
+            operation_inv_sqrt_var7;
+            operation_drop;
+        }
+        default_action = operation_drop();
+        size = 256;
+    }
+
+    // 偏差*1/sqrt(var(x))
+    action operation_norm() {
+        // 偏差16位->32位
+        bit<32> deviation_0_0 = (bit<32>) meta.deviation_0_0 | (( meta.deviation_0_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_0_1 = (bit<32>) meta.deviation_0_1 | (( meta.deviation_0_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_0_2 = (bit<32>) meta.deviation_0_2 | (( meta.deviation_0_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_0_3 = (bit<32>) meta.deviation_0_3 | (( meta.deviation_0_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_0_4 = (bit<32>) meta.deviation_0_4 | (( meta.deviation_0_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_0_5 = (bit<32>) meta.deviation_0_5 | (( meta.deviation_0_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_1_0 = (bit<32>) meta.deviation_1_0 | (( meta.deviation_1_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_1_1 = (bit<32>) meta.deviation_1_1 | (( meta.deviation_1_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_1_2 = (bit<32>) meta.deviation_1_2 | (( meta.deviation_1_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_1_3 = (bit<32>) meta.deviation_1_3 | (( meta.deviation_1_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_1_4 = (bit<32>) meta.deviation_1_4 | (( meta.deviation_1_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_1_5 = (bit<32>) meta.deviation_1_5 | (( meta.deviation_1_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_2_0 = (bit<32>) meta.deviation_2_0 | (( meta.deviation_2_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_2_1 = (bit<32>) meta.deviation_2_1 | (( meta.deviation_2_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_2_2 = (bit<32>) meta.deviation_2_2 | (( meta.deviation_2_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_2_3 = (bit<32>) meta.deviation_2_3 | (( meta.deviation_2_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_2_4 = (bit<32>) meta.deviation_2_4 | (( meta.deviation_2_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_2_5 = (bit<32>) meta.deviation_2_5 | (( meta.deviation_2_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_3_0 = (bit<32>) meta.deviation_3_0 | (( meta.deviation_3_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_3_1 = (bit<32>) meta.deviation_3_1 | (( meta.deviation_3_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_3_2 = (bit<32>) meta.deviation_3_2 | (( meta.deviation_3_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_3_3 = (bit<32>) meta.deviation_3_3 | (( meta.deviation_3_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_3_4 = (bit<32>) meta.deviation_3_4 | (( meta.deviation_3_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_3_5 = (bit<32>) meta.deviation_3_5 | (( meta.deviation_3_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_4_0 = (bit<32>) meta.deviation_4_0 | (( meta.deviation_4_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_4_1 = (bit<32>) meta.deviation_4_1 | (( meta.deviation_4_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_4_2 = (bit<32>) meta.deviation_4_2 | (( meta.deviation_4_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_4_3 = (bit<32>) meta.deviation_4_3 | (( meta.deviation_4_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_4_4 = (bit<32>) meta.deviation_4_4 | (( meta.deviation_4_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_4_5 = (bit<32>) meta.deviation_4_5 | (( meta.deviation_4_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_5_0 = (bit<32>) meta.deviation_5_0 | (( meta.deviation_5_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_5_1 = (bit<32>) meta.deviation_5_1 | (( meta.deviation_5_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_5_2 = (bit<32>) meta.deviation_5_2 | (( meta.deviation_5_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_5_3 = (bit<32>) meta.deviation_5_3 | (( meta.deviation_5_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_5_4 = (bit<32>) meta.deviation_5_4 | (( meta.deviation_5_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_5_5 = (bit<32>) meta.deviation_5_5 | (( meta.deviation_5_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_6_0 = (bit<32>) meta.deviation_6_0 | (( meta.deviation_6_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_6_1 = (bit<32>) meta.deviation_6_1 | (( meta.deviation_6_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_6_2 = (bit<32>) meta.deviation_6_2 | (( meta.deviation_6_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_6_3 = (bit<32>) meta.deviation_6_3 | (( meta.deviation_6_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_6_4 = (bit<32>) meta.deviation_6_4 | (( meta.deviation_6_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_6_5 = (bit<32>) meta.deviation_6_5 | (( meta.deviation_6_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_7_0 = (bit<32>) meta.deviation_7_0 | (( meta.deviation_7_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_7_1 = (bit<32>) meta.deviation_7_1 | (( meta.deviation_7_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_7_2 = (bit<32>) meta.deviation_7_2 | (( meta.deviation_7_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_7_3 = (bit<32>) meta.deviation_7_3 | (( meta.deviation_7_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_7_4 = (bit<32>) meta.deviation_7_4 | (( meta.deviation_7_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> deviation_7_5 = (bit<32>) meta.deviation_7_5 | (( meta.deviation_7_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+
+        bit<32> inv_sqrt_var_0 = (bit<32>) meta.inv_sqrt_var0 | (( meta.inv_sqrt_var0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> inv_sqrt_var_1 = (bit<32>) meta.inv_sqrt_var1 | (( meta.inv_sqrt_var1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> inv_sqrt_var_2 = (bit<32>) meta.inv_sqrt_var2 | (( meta.inv_sqrt_var2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> inv_sqrt_var_3 = (bit<32>) meta.inv_sqrt_var3 | (( meta.inv_sqrt_var3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> inv_sqrt_var_4 = (bit<32>) meta.inv_sqrt_var4 | (( meta.inv_sqrt_var4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> inv_sqrt_var_5 = (bit<32>) meta.inv_sqrt_var5 | (( meta.inv_sqrt_var5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> inv_sqrt_var_6 = (bit<32>) meta.inv_sqrt_var6 | (( meta.inv_sqrt_var6 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> inv_sqrt_var_7 = (bit<32>) meta.inv_sqrt_var7 | (( meta.inv_sqrt_var7 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+
+        // 求出norm值
+        hdr.s0_output0_calc.s0_output_0_0 = (deviation_0_0 * inv_sqrt_var_0)[23:8];
+        hdr.s0_output0_calc.s0_output_0_1 = (deviation_0_1 * inv_sqrt_var_0)[23:8];
+        hdr.s0_output0_calc.s0_output_0_2 = (deviation_0_2 * inv_sqrt_var_0)[23:8];
+        hdr.s0_output0_calc.s0_output_0_3 = (deviation_0_3 * inv_sqrt_var_0)[23:8];
+        hdr.s0_output0_calc.s0_output_0_4 = (deviation_0_4 * inv_sqrt_var_0)[23:8];
+        hdr.s0_output0_calc.s0_output_0_5 = (deviation_0_5 * inv_sqrt_var_0)[23:8];
+        hdr.s0_output0_calc.s0_output_1_0 = (deviation_1_0 * inv_sqrt_var_1)[23:8];
+        hdr.s0_output0_calc.s0_output_1_1 = (deviation_1_1 * inv_sqrt_var_1)[23:8];
+        hdr.s0_output0_calc.s0_output_1_2 = (deviation_1_2 * inv_sqrt_var_1)[23:8];
+        hdr.s0_output0_calc.s0_output_1_3 = (deviation_1_3 * inv_sqrt_var_1)[23:8];
+        hdr.s0_output0_calc.s0_output_1_4 = (deviation_1_4 * inv_sqrt_var_1)[23:8];
+        hdr.s0_output0_calc.s0_output_1_5 = (deviation_1_5 * inv_sqrt_var_1)[23:8];
+        hdr.s0_output0_calc.s0_output_2_0 = (deviation_2_0 * inv_sqrt_var_2)[23:8];
+        hdr.s0_output0_calc.s0_output_2_1 = (deviation_2_1 * inv_sqrt_var_2)[23:8];
+        hdr.s0_output0_calc.s0_output_2_2 = (deviation_2_2 * inv_sqrt_var_2)[23:8];
+        hdr.s0_output0_calc.s0_output_2_3 = (deviation_2_3 * inv_sqrt_var_2)[23:8];
+        hdr.s0_output0_calc.s0_output_2_4 = (deviation_2_4 * inv_sqrt_var_2)[23:8];
+        hdr.s0_output0_calc.s0_output_2_5 = (deviation_2_5 * inv_sqrt_var_2)[23:8];
+        hdr.s0_output0_calc.s0_output_3_0 = (deviation_3_0 * inv_sqrt_var_3)[23:8];
+        hdr.s0_output0_calc.s0_output_3_1 = (deviation_3_1 * inv_sqrt_var_3)[23:8];
+        hdr.s0_output0_calc.s0_output_3_2 = (deviation_3_2 * inv_sqrt_var_3)[23:8];
+        hdr.s0_output0_calc.s0_output_3_3 = (deviation_3_3 * inv_sqrt_var_3)[23:8];
+        hdr.s0_output0_calc.s0_output_3_4 = (deviation_3_4 * inv_sqrt_var_3)[23:8];
+        hdr.s0_output0_calc.s0_output_3_5 = (deviation_3_5 * inv_sqrt_var_3)[23:8];
+        hdr.s0_output0_calc.s0_output_4_0 = (deviation_4_0 * inv_sqrt_var_4)[23:8];
+        hdr.s0_output0_calc.s0_output_4_1 = (deviation_4_1 * inv_sqrt_var_4)[23:8];
+        hdr.s0_output0_calc.s0_output_4_2 = (deviation_4_2 * inv_sqrt_var_4)[23:8];
+        hdr.s0_output0_calc.s0_output_4_3 = (deviation_4_3 * inv_sqrt_var_4)[23:8];
+        hdr.s0_output0_calc.s0_output_4_4 = (deviation_4_4 * inv_sqrt_var_4)[23:8];
+        hdr.s0_output0_calc.s0_output_4_5 = (deviation_4_5 * inv_sqrt_var_4)[23:8];
+        hdr.s0_output0_calc.s0_output_5_0 = (deviation_5_0 * inv_sqrt_var_5)[23:8];
+        hdr.s0_output0_calc.s0_output_5_1 = (deviation_5_1 * inv_sqrt_var_5)[23:8];
+        hdr.s0_output0_calc.s0_output_5_2 = (deviation_5_2 * inv_sqrt_var_5)[23:8];
+        hdr.s0_output0_calc.s0_output_5_3 = (deviation_5_3 * inv_sqrt_var_5)[23:8];
+        hdr.s0_output0_calc.s0_output_5_4 = (deviation_5_4 * inv_sqrt_var_5)[23:8];
+        hdr.s0_output0_calc.s0_output_5_5 = (deviation_5_5 * inv_sqrt_var_5)[23:8];
+        hdr.s0_output0_calc.s0_output_6_0 = (deviation_6_0 * inv_sqrt_var_6)[23:8];
+        hdr.s0_output0_calc.s0_output_6_1 = (deviation_6_1 * inv_sqrt_var_6)[23:8];
+        hdr.s0_output0_calc.s0_output_6_2 = (deviation_6_2 * inv_sqrt_var_6)[23:8];
+        hdr.s0_output0_calc.s0_output_6_3 = (deviation_6_3 * inv_sqrt_var_6)[23:8];
+        hdr.s0_output0_calc.s0_output_6_4 = (deviation_6_4 * inv_sqrt_var_6)[23:8];
+        hdr.s0_output0_calc.s0_output_6_5 = (deviation_6_5 * inv_sqrt_var_6)[23:8];
+        hdr.s0_output0_calc.s0_output_7_0 = (deviation_7_0 * inv_sqrt_var_7)[23:8];
+        hdr.s0_output0_calc.s0_output_7_1 = (deviation_7_1 * inv_sqrt_var_7)[23:8];
+        hdr.s0_output0_calc.s0_output_7_2 = (deviation_7_2 * inv_sqrt_var_7)[23:8];
+        hdr.s0_output0_calc.s0_output_7_3 = (deviation_7_3 * inv_sqrt_var_7)[23:8];
+        hdr.s0_output0_calc.s0_output_7_4 = (deviation_7_4 * inv_sqrt_var_7)[23:8];
+        hdr.s0_output0_calc.s0_output_7_5 = (deviation_7_5 * inv_sqrt_var_7)[23:8];
+    }
+
 
 
     apply {
         if (hdr.p4calc.isValid()) {
             operation_calc_is_s1_output_store();
             store_output_table.apply();
+
+            operation_calc_mean_var();
+            calc_inv_sqrt_var0.apply();
+            calc_inv_sqrt_var1.apply();
+            calc_inv_sqrt_var2.apply();
+            calc_inv_sqrt_var3.apply();
+            calc_inv_sqrt_var4.apply();
+            calc_inv_sqrt_var5.apply();
+            calc_inv_sqrt_var6.apply();
+            calc_inv_sqrt_var7.apply();
+            operation_norm();
+
+            
         } else {
             operation_drop();
         }

@@ -976,6 +976,8 @@ control MyIngress(inout headers hdr,
         bit<16> result_7_4 = (ff_7_0 * w2_0_4 + ff_7_1 * w2_1_4 + ff_7_2 * w2_2_4 + ff_7_3 * w2_3_4 + ff_7_4 * w2_4_4 + ff_7_5 * w2_5_4 + ff_7_6 * w2_6_4 + ff_7_7 * w2_7_4 + ff_7_8 * w2_8_4 + ff_7_9 * w2_9_4 + ff_7_10 * w2_10_4 + ff_7_11 * w2_11_4)[23:8] + b2_4;
         bit<16> result_7_5 = (ff_7_0 * w2_0_5 + ff_7_1 * w2_1_5 + ff_7_2 * w2_2_5 + ff_7_3 * w2_3_5 + ff_7_4 * w2_4_5 + ff_7_5 * w2_5_5 + ff_7_6 * w2_6_5 + ff_7_7 * w2_7_5 + ff_7_8 * w2_8_5 + ff_7_9 * w2_9_5 + ff_7_10 * w2_10_5 + ff_7_11 * w2_11_5)[23:8] + b2_5;
 
+
+        //残差连接
         hdr.s0_output0_calc.s0_output_0_0 = hdr.s0_output0_calc.s0_output_0_0 + result_0_0;
         hdr.s0_output0_calc.s0_output_0_1 = hdr.s0_output0_calc.s0_output_0_1 + result_0_1;
         hdr.s0_output0_calc.s0_output_0_2 = hdr.s0_output0_calc.s0_output_0_2 + result_0_2;
@@ -1396,7 +1398,6 @@ control MyIngress(inout headers hdr,
         hdr.s0_output0_calc.s0_output_7_3 = (deviation_7_3 * inv_sqrt_var_7)[23:8];
         hdr.s0_output0_calc.s0_output_7_4 = (deviation_7_4 * inv_sqrt_var_7)[23:8];
         hdr.s0_output0_calc.s0_output_7_5 = (deviation_7_5 * inv_sqrt_var_7)[23:8];
-
     }
     
 
@@ -1409,7 +1410,6 @@ control MyIngress(inout headers hdr,
             operation_linear2();
 
             operation_calc_mean_var();
-
             calc_inv_sqrt_var0.apply();
             calc_inv_sqrt_var1.apply();
             calc_inv_sqrt_var2.apply();
@@ -1418,8 +1418,8 @@ control MyIngress(inout headers hdr,
             calc_inv_sqrt_var5.apply();
             calc_inv_sqrt_var6.apply();
             calc_inv_sqrt_var7.apply();
-
             operation_norm();
+            
             standard_metadata.mcast_grp =  1;
             // standard_metadata.egress_spec = 2;
         } else {
