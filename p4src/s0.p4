@@ -165,6 +165,7 @@ header s1_output0_calc_t {
 }
 
 header s7_output0_calc_t {
+    bit<16> s7_before_sigmoid;
     bit<16> s7_output;
 }
 
