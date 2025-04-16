@@ -17,193 +17,212 @@ const bit<8>  P4CALC_4     = 0x34;   // '4'
 const bit<8>  P4CALC_VER   = 0x01;   // v0.1
 
 //dff 暂取12，W1​(6*12),b1(12)
-const bit<32> w1_0_0 = 0x00009c4c;
-const bit<32> w1_0_1 = 0xffff34b5;
-const bit<32> w1_0_2 = 0x00003639;
-const bit<32> w1_0_3 = 0xffff7986;
-const bit<32> w1_0_4 = 0xffff1226;
-const bit<32> w1_0_5 = 0xffff2e25;
-const bit<32> w1_0_6 = 0x000092c8;
-const bit<32> w1_0_7 = 0x00000943;
-const bit<32> w1_0_8 = 0xffff5e05;
-const bit<32> w1_0_9 = 0x000066bd;
-const bit<32> w1_0_10 = 0xffff197d;
-const bit<32> w1_0_11 = 0x00003229;
-const bit<32> w1_1_0 = 0x0000ae83;
-const bit<32> w1_1_1 = 0x0000e843;
-const bit<32> w1_1_2 = 0x0000ee3b;
-const bit<32> w1_1_3 = 0xffff40be;
-const bit<32> w1_1_4 = 0x00002b09;
-const bit<32> w1_1_5 = 0xfffffb76;
-const bit<32> w1_1_6 = 0xffffabb7;
-const bit<32> w1_1_7 = 0x0000bc15;
-const bit<32> w1_1_8 = 0xffff2329;
-const bit<32> w1_1_9 = 0x00007f21;
-const bit<32> w1_1_10 = 0x0000c7c4;
-const bit<32> w1_1_11 = 0xffff5cf5;
-const bit<32> w1_2_0 = 0xffff3f9c;
-const bit<32> w1_2_1 = 0xffffb876;
-const bit<32> w1_2_2 = 0xffffd191;
-const bit<32> w1_2_3 = 0xffff0c10;
-const bit<32> w1_2_4 = 0x0000294c;
-const bit<32> w1_2_5 = 0x00005632;
-const bit<32> w1_2_6 = 0x0000168a;
-const bit<32> w1_2_7 = 0xffff37bc;
-const bit<32> w1_2_8 = 0xffffa1f8;
-const bit<32> w1_2_9 = 0xffff6a7b;
-const bit<32> w1_2_10 = 0x0000bb65;
-const bit<32> w1_2_11 = 0x00009bd1;
-const bit<32> w1_3_0 = 0x0000b20e;
-const bit<32> w1_3_1 = 0xffff254f;
-const bit<32> w1_3_2 = 0xffff0663;
-const bit<32> w1_3_3 = 0xffff3447;
-const bit<32> w1_3_4 = 0xffffe2dc;
-const bit<32> w1_3_5 = 0xffff8b5d;
-const bit<32> w1_3_6 = 0xffff7c4a;
-const bit<32> w1_3_7 = 0xffff396e;
-const bit<32> w1_3_8 = 0xffff7c4c;
-const bit<32> w1_3_9 = 0x0000053c;
-const bit<32> w1_3_10 = 0x000050c5;
-const bit<32> w1_3_11 = 0xffffd532;
-const bit<32> w1_4_0 = 0xffffbc7f;
-const bit<32> w1_4_1 = 0x000036dd;
-const bit<32> w1_4_2 = 0xffffa54b;
-const bit<32> w1_4_3 = 0x0000df2a;
-const bit<32> w1_4_4 = 0xffffbac8;
-const bit<32> w1_4_5 = 0xffffafa2;
-const bit<32> w1_4_6 = 0xffffb9ce;
-const bit<32> w1_4_7 = 0xffff96fb;
-const bit<32> w1_4_8 = 0xffff7d78;
-const bit<32> w1_4_9 = 0xffff9eda;
-const bit<32> w1_4_10 = 0x000092f9;
-const bit<32> w1_4_11 = 0xffffd6cd;
-const bit<32> w1_5_0 = 0x00003683;
-const bit<32> w1_5_1 = 0x000002e6;
-const bit<32> w1_5_2 = 0xffff89ab;
-const bit<32> w1_5_3 = 0x0000bbd0;
-const bit<32> w1_5_4 = 0xffff6749;
-const bit<32> w1_5_5 = 0x000055a5;
-const bit<32> w1_5_6 = 0x00005975;
-const bit<32> w1_5_7 = 0x00002551;
-const bit<32> w1_5_8 = 0xffffbf57;
-const bit<32> w1_5_9 = 0xffff2e82;
-const bit<32> w1_5_10 = 0x00001e50;
-const bit<32> w1_5_11 = 0xffff0db6;
+const bit<32> w1_0_0 = 0x000000A0;
+const bit<32> w1_0_1 = 0xFFFFFFE6;
+const bit<32> w1_0_2 = 0xFFFFFFB3;
+const bit<32> w1_0_3 = 0x00000036;
+const bit<32> w1_0_4 = 0x00000020;
+const bit<32> w1_0_5 = 0x00000035;
+const bit<32> w1_0_6 = 0xFFFFFF9E;
+const bit<32> w1_0_7 = 0xFFFFFFB9;
+const bit<32> w1_0_8 = 0x0000006C;
+const bit<32> w1_0_9 = 0xFFFFFFBB;
+const bit<32> w1_0_10 = 0xFFFFFFA4;
+const bit<32> w1_0_11 = 0xFFFFFFB8;
 
-const bit<32> w2_0_0 = 0x0000cfec;
-const bit<32> w2_0_1 = 0x00003056;
-const bit<32> w2_0_2 = 0xfffff698;
-const bit<32> w2_0_3 = 0xffff4c4e;
-const bit<32> w2_0_4 = 0x00005247;
-const bit<32> w2_0_5 = 0x00005d2e;
-const bit<32> w2_1_0 = 0x0000b173;
-const bit<32> w2_1_1 = 0x000018e7;
-const bit<32> w2_1_2 = 0x0000bd99;
-const bit<32> w2_1_3 = 0x0000d767;
-const bit<32> w2_1_4 = 0xffffda1e;
-const bit<32> w2_1_5 = 0x0000138f;
-const bit<32> w2_2_0 = 0x00005bcb;
-const bit<32> w2_2_1 = 0xffffdf55;
-const bit<32> w2_2_2 = 0xffff550a;
-const bit<32> w2_2_3 = 0x0000dd2f;
-const bit<32> w2_2_4 = 0x00001cd6;
-const bit<32> w2_2_5 = 0x000014e8;
-const bit<32> w2_3_0 = 0x0000fa5b;
-const bit<32> w2_3_1 = 0xffff0a5b;
-const bit<32> w2_3_2 = 0x00008a7a;
-const bit<32> w2_3_3 = 0x0000632b;
-const bit<32> w2_3_4 = 0xfffffb49;
-const bit<32> w2_3_5 = 0x0000fb6d;
-const bit<32> w2_4_0 = 0xffffafbf;
-const bit<32> w2_4_1 = 0x00003fb9;
-const bit<32> w2_4_2 = 0x0000c26e;
-const bit<32> w2_4_3 = 0xffff5f28;
-const bit<32> w2_4_4 = 0xffffea0c;
-const bit<32> w2_4_5 = 0x0000cdc6;
-const bit<32> w2_5_0 = 0x000022f1;
-const bit<32> w2_5_1 = 0x00000237;
-const bit<32> w2_5_2 = 0xffffe355;
-const bit<32> w2_5_3 = 0x0000cf73;
-const bit<32> w2_5_4 = 0xffffc00b;
-const bit<32> w2_5_5 = 0x00000ca9;
-const bit<32> w2_6_0 = 0x0000e66c;
-const bit<32> w2_6_1 = 0x0000ec58;
-const bit<32> w2_6_2 = 0xffff7a5c;
-const bit<32> w2_6_3 = 0xffff1d59;
-const bit<32> w2_6_4 = 0x0000db49;
-const bit<32> w2_6_5 = 0xffffa1c8;
-const bit<32> w2_7_0 = 0x000030be;
-const bit<32> w2_7_1 = 0xffffcf11;
-const bit<32> w2_7_2 = 0xffff34d0;
-const bit<32> w2_7_3 = 0x0000a10d;
-const bit<32> w2_7_4 = 0xffffb064;
-const bit<32> w2_7_5 = 0x0000b1e3;
-const bit<32> w2_8_0 = 0xffffd9cb;
-const bit<32> w2_8_1 = 0x00006e27;
-const bit<32> w2_8_2 = 0x0000ad70;
-const bit<32> w2_8_3 = 0xffff5959;
-const bit<32> w2_8_4 = 0x000090db;
-const bit<32> w2_8_5 = 0xffff5f12;
-const bit<32> w2_9_0 = 0x0000774e;
-const bit<32> w2_9_1 = 0xfffff069;
-const bit<32> w2_9_2 = 0x0000f6c3;
-const bit<32> w2_9_3 = 0xffffa211;
-const bit<32> w2_9_4 = 0xffffea70;
-const bit<32> w2_9_5 = 0xffffc681;
-const bit<32> w2_10_0 = 0xffff77b4;
-const bit<32> w2_10_1 = 0x000047a2;
-const bit<32> w2_10_2 = 0xffffcb29;
-const bit<32> w2_10_3 = 0x00005d5f;
-const bit<32> w2_10_4 = 0xffff0619;
-const bit<32> w2_10_5 = 0xffff0e35;
-const bit<32> w2_11_0 = 0xffffdc72;
-const bit<32> w2_11_1 = 0xffff6a11;
-const bit<32> w2_11_2 = 0xffff2ca2;
-const bit<32> w2_11_3 = 0xffff94d8;
-const bit<32> w2_11_4 = 0x000044c4;
-const bit<32> w2_11_5 = 0x00006393;
+const bit<32> w1_1_0 = 0xFFFFFF58;
+const bit<32> w1_1_1 = 0xFFFFFFB1;
+const bit<32> w1_1_2 = 0x0000000C;
+const bit<32> w1_1_3 = 0x0000000D;
+const bit<32> w1_1_4 = 0xFFFFFFDD;
+const bit<32> w1_1_5 = 0x0000009E;
+const bit<32> w1_1_6 = 0xFFFFFFA8;
+const bit<32> w1_1_7 = 0x00000019;
+const bit<32> w1_1_8 = 0xFFFFFFCA;
+const bit<32> w1_1_9 = 0x0000004F;
+const bit<32> w1_1_10 = 0xFFFFFFDC;
+const bit<32> w1_1_11 = 0x00000063;
+
+const bit<32> w1_2_0 = 0xFFFFFFFF;
+const bit<32> w1_2_1 = 0xFFFFFFEE;
+const bit<32> w1_2_2 = 0x0000000B;
+const bit<32> w1_2_3 = 0x0000000E;
+const bit<32> w1_2_4 = 0xFFFFFFC3;
+const bit<32> w1_2_5 = 0xFFFFFF83;
+const bit<32> w1_2_6 = 0xFFFFFF9A;
+const bit<32> w1_2_7 = 0xFFFFFF76;
+const bit<32> w1_2_8 = 0xFFFFFFED;
+const bit<32> w1_2_9 = 0xFFFFFFB0;
+const bit<32> w1_2_10 = 0xFFFFFFFD;
+const bit<32> w1_2_11 = 0xFFFFFF9C;
+
+const bit<32> w1_3_0 = 0xFFFFFFE6;
+const bit<32> w1_3_1 = 0x00000045;
+const bit<32> w1_3_2 = 0xFFFFFFC9;
+const bit<32> w1_3_3 = 0xFFFFFF85;
+const bit<32> w1_3_4 = 0xFFFFFFF7;
+const bit<32> w1_3_5 = 0xFFFFFFE4;
+const bit<32> w1_3_6 = 0x00000003;
+const bit<32> w1_3_7 = 0x00000046;
+const bit<32> w1_3_8 = 0xFFFFFFDF;
+const bit<32> w1_3_9 = 0xFFFFFFAB;
+const bit<32> w1_3_10 = 0x0000001C;
+const bit<32> w1_3_11 = 0xFFFFFFA9;
+
+const bit<32> w1_4_0 = 0x0000000C;
+const bit<32> w1_4_1 = 0xFFFFFFF9;
+const bit<32> w1_4_2 = 0x00000019;
+const bit<32> w1_4_3 = 0xFFFFFFF1;
+const bit<32> w1_4_4 = 0x00000081;
+const bit<32> w1_4_5 = 0xFFFFFFF8;
+const bit<32> w1_4_6 = 0xFFFFFF8C;
+const bit<32> w1_4_7 = 0xFFFFFFAC;
+const bit<32> w1_4_8 = 0xFFFFFFE3;
+const bit<32> w1_4_9 = 0x00000036;
+const bit<32> w1_4_10 = 0x0000006D;
+const bit<32> w1_4_11 = 0x0000007E;
+
+const bit<32> w1_5_0 = 0x00000010;
+const bit<32> w1_5_1 = 0xFFFFFF88;
+const bit<32> w1_5_2 = 0xFFFFFFBF;
+const bit<32> w1_5_3 = 0xFFFFFF5A;
+const bit<32> w1_5_4 = 0x0000004F;
+const bit<32> w1_5_5 = 0xFFFFFF94;
+const bit<32> w1_5_6 = 0x00000033;
+const bit<32> w1_5_7 = 0x0000003A;
+const bit<32> w1_5_8 = 0xFFFFFFF0;
+const bit<32> w1_5_9 = 0x00000075;
+const bit<32> w1_5_10 = 0x00000074;
+const bit<32> w1_5_11 = 0xFFFFFF69;
+
+const bit<32> w2_0_0 = 0xFFFFFF87;
+const bit<32> w2_0_1 = 0x0000007C;
+const bit<32> w2_0_2 = 0x00000026;
+const bit<32> w2_0_3 = 0x00000042;
+const bit<32> w2_0_4 = 0xFFFFFF82;
+const bit<32> w2_0_5 = 0x00000035;
+
+const bit<32> w2_1_0 = 0xFFFFFFD5;
+const bit<32> w2_1_1 = 0x0000005B;
+const bit<32> w2_1_2 = 0xFFFFFFDF;
+const bit<32> w2_1_3 = 0xFFFFFFE0;
+const bit<32> w2_1_4 = 0x00000005;
+const bit<32> w2_1_5 = 0x00000061;
+
+const bit<32> w2_2_0 = 0xFFFFFFD4;
+const bit<32> w2_2_1 = 0xFFFFFFEC;
+const bit<32> w2_2_2 = 0x00000021;
+const bit<32> w2_2_3 = 0x00000037;
+const bit<32> w2_2_4 = 0xFFFFFFDB;
+const bit<32> w2_2_5 = 0x0000001D;
+
+const bit<32> w2_3_0 = 0x00000009;
+const bit<32> w2_3_1 = 0xFFFFFFD7;
+const bit<32> w2_3_2 = 0x00000048;
+const bit<32> w2_3_3 = 0xFFFFFFD1;
+const bit<32> w2_3_4 = 0x00000086;
+const bit<32> w2_3_5 = 0xFFFFFFE3;
+
+const bit<32> w2_4_0 = 0x00000044;
+const bit<32> w2_4_1 = 0x0000000F;
+const bit<32> w2_4_2 = 0xFFFFFFCC;
+const bit<32> w2_4_3 = 0x00000056;
+const bit<32> w2_4_4 = 0x00000014;
+const bit<32> w2_4_5 = 0xFFFFFF89;
+
+const bit<32> w2_5_0 = 0x00000069;
+const bit<32> w2_5_1 = 0xFFFFFFCA;
+const bit<32> w2_5_2 = 0x00000003;
+const bit<32> w2_5_3 = 0xFFFFFFFE;
+const bit<32> w2_5_4 = 0x0000003B;
+const bit<32> w2_5_5 = 0x00000023;
+
+const bit<32> w2_6_0 = 0x00000027;
+const bit<32> w2_6_1 = 0x00000023;
+const bit<32> w2_6_2 = 0x00000008;
+const bit<32> w2_6_3 = 0xFFFFFFCC;
+const bit<32> w2_6_4 = 0x0000005F;
+const bit<32> w2_6_5 = 0xFFFFFFAB;
+
+const bit<32> w2_7_0 = 0x00000056;
+const bit<32> w2_7_1 = 0x00000057;
+const bit<32> w2_7_2 = 0x00000022;
+const bit<32> w2_7_3 = 0x0000002A;
+const bit<32> w2_7_4 = 0x00000054;
+const bit<32> w2_7_5 = 0xFFFFFFEF;
+
+const bit<32> w2_8_0 = 0x00000025;
+const bit<32> w2_8_1 = 0xFFFFFFF3;
+const bit<32> w2_8_2 = 0xFFFFFFE3;
+const bit<32> w2_8_3 = 0xFFFFFFCF;
+const bit<32> w2_8_4 = 0xFFFFFFC9;
+const bit<32> w2_8_5 = 0x00000057;
+
+const bit<32> w2_9_0 = 0x0000003C;
+const bit<32> w2_9_1 = 0xFFFFFFD4;
+const bit<32> w2_9_2 = 0x0000000C;
+const bit<32> w2_9_3 = 0xFFFFFFE2;
+const bit<32> w2_9_4 = 0x00000042;
+const bit<32> w2_9_5 = 0xFFFFFF85;
+
+const bit<32> w2_10_0 = 0xFFFFFFF9;
+const bit<32> w2_10_1 = 0xFFFFFFDF;
+const bit<32> w2_10_2 = 0xFFFFFFD1;
+const bit<32> w2_10_3 = 0xFFFFFFA5;
+const bit<32> w2_10_4 = 0x00000017;
+const bit<32> w2_10_5 = 0xFFFFFFA6;
+
+const bit<32> w2_11_0 = 0x00000008;
+const bit<32> w2_11_1 = 0xFFFFFF79;
+const bit<32> w2_11_2 = 0x0000003D;
+const bit<32> w2_11_3 = 0xFFFFFFF6;
+const bit<32> w2_11_4 = 0xFFFFFFF9;
+const bit<32> w2_11_5 = 0x00000014;
 
 
+const bit<16> b_0 = 0x0031;
+const bit<16> b_1 = 0xFFDC;
+const bit<16> b_2 = 0xFFD7;
+const bit<16> b_3 = 0x003C;
+const bit<16> b_4 = 0x0019;
+const bit<16> b_5 = 0x0060;
+const bit<16> b_6 = 0x0030;
+const bit<16> b_7 = 0x0070;
+const bit<16> b_8 = 0x0047;
+const bit<16> b_9 = 0x0035;
+const bit<16> b_10 = 0x003F;
+const bit<16> b_11 = 0xFFD9;
 
+const bit<16> b2_0 = 0xFFFD;
+const bit<16> b2_1 = 0xFFE2;
+const bit<16> b2_2 = 0x0008;
+const bit<16> b2_3 = 0xFFE5;
+const bit<16> b2_4 = 0xFFC5;
+const bit<16> b2_5 = 0x001B;
 
-const bit<16> b_0 = 0xEF1F;
-const bit<16> b_1 = 0xBD0E;
-const bit<16> b_2 = 0xE722;
-const bit<16> b_3 = 0xF4ED;
-const bit<16> b_4 = 0x30AA;
-const bit<16> b_5 = 0x306A;
-const bit<16> b_6 = 0x8496;
-const bit<16> b_7 = 0x901A;
-const bit<16> b_8 = 0x8135;
-const bit<16> b_9 = 0x43D5;
-const bit<16> b_10 = 0xE337;
-const bit<16> b_11 = 0xCD3C;
+const bit<32> gamma_0 = 0x00000106;
+const bit<32> gamma_1 = 0x00000122;
+const bit<32> gamma_2 = 0x000000EE;
+const bit<32> gamma_3 = 0x0000011C;
+const bit<32> gamma_4 = 0x000000FA;
+const bit<32> gamma_5 = 0x00000109;
 
-const bit<16> b2_0 = 0x2E24;
-const bit<16> b2_1 = 0xC7F1;
-const bit<16> b2_2 = 0xE3CB;
-const bit<16> b2_3 = 0x1AEF;
-const bit<16> b2_4 = 0x2351;
-const bit<16> b2_5 = 0x0B7E;
+const bit<16> beta_0 = 0x000E;
+const bit<16> beta_1 = 0xFFF9;
+const bit<16> beta_2 = 0xFFF3;
+const bit<16> beta_3 = 0xFFD5;
+const bit<16> beta_4 = 0xFFF1;
+const bit<16> beta_5 = 0x000B;
 
-const bit<16> ETHERTYPE_PTP  = 0x88F7;
-
-header ptp_t {
-    bit<4>   transport_specifics;
-    bit<4>   message_type;
-    bit<4>   reserved1;
-    bit<4>   version;
-    bit<16>  message_legth;
-    bit<8>   domain_number;
-    bit<8>   reserved2;
-    bit<16>  flagfiled;
-    bit<64>  correction_field;
-    bit<32>  reserved3;
-    bit<80>  source_port_identity;
-    bit<16>  sequence_id;
-    bit<8>   control_field;
-    bit<8>   log_message_interval;
+header feature_t {
+    bit<16> feature_0;
+    bit<16> feature_1;
+    bit<16> feature_2;
+    bit<16> feature_3;
+    bit<16> feature_4;
+    bit<16> feature_5;
 }
+
 header p4calc_t {
     bit<8> p;
     bit<8> four;
@@ -318,13 +337,28 @@ header s1_output0_calc_t {
 }
 
 header s7_output0_calc_t {
-    bit<16> s7_before_sigmoid;
-    bit<16> s7_output;
+    bit<16> s7_before_sigmoid_0;
+    bit<16> s7_before_sigmoid_1;
+    bit<16> s7_before_sigmoid_2;
+    bit<16> s7_before_sigmoid_3;
+    bit<16> s7_before_sigmoid_4;
+    bit<16> s7_before_sigmoid_5;
+    bit<16> s7_before_sigmoid_6;
+    bit<16> s7_before_sigmoid_7;
+
+    bit<16> s7_output_0;
+    bit<16> s7_output_1;
+    bit<16> s7_output_2;
+    bit<16> s7_output_3;
+    bit<16> s7_output_4;
+    bit<16> s7_output_5;
+    bit<16> s7_output_6;
+    bit<16> s7_output_7;
 }
 
 struct headers {
     ethernet_t   ethernet;
-    ptp_t       ptp;
+    feature_t       feature;
     p4calc_t     p4calc;
     s0_output0_calc_t s0_output0_calc;
     s1_output0_calc_t s1_output0_calc;
@@ -512,14 +546,13 @@ parser MyParser(packet_in packet,
     state start {
         packet.extract(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {
-            ETHERTYPE_PTP : parse_ptp;
-            P4CALC_ETYPE : check_p4calc;
+            P4CALC_ETYPE : parse_feature;
             default      : accept;
         }
     }
 
-    state parse_ptp {
-        packet.extract(hdr.ptp);
+    state parse_feature {
+        packet.extract(hdr.feature);
         transition check_p4calc;
     }
 
@@ -1398,6 +1431,104 @@ control MyIngress(inout headers hdr,
         hdr.s0_output0_calc.s0_output_7_3 = (deviation_7_3 * inv_sqrt_var_7)[23:8];
         hdr.s0_output0_calc.s0_output_7_4 = (deviation_7_4 * inv_sqrt_var_7)[23:8];
         hdr.s0_output0_calc.s0_output_7_5 = (deviation_7_5 * inv_sqrt_var_7)[23:8];
+
+        bit<32> s0_output_0_0 = (bit<32>) hdr.s0_output0_calc.s0_output_0_0 | (( hdr.s0_output0_calc.s0_output_0_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_0_1 = (bit<32>) hdr.s0_output0_calc.s0_output_0_1 | (( hdr.s0_output0_calc.s0_output_0_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_0_2 = (bit<32>) hdr.s0_output0_calc.s0_output_0_2 | (( hdr.s0_output0_calc.s0_output_0_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_0_3 = (bit<32>) hdr.s0_output0_calc.s0_output_0_3 | (( hdr.s0_output0_calc.s0_output_0_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_0_4 = (bit<32>) hdr.s0_output0_calc.s0_output_0_4 | (( hdr.s0_output0_calc.s0_output_0_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_0_5 = (bit<32>) hdr.s0_output0_calc.s0_output_0_5 | (( hdr.s0_output0_calc.s0_output_0_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_1_0 = (bit<32>) hdr.s0_output0_calc.s0_output_1_0 | (( hdr.s0_output0_calc.s0_output_1_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_1_1 = (bit<32>) hdr.s0_output0_calc.s0_output_1_1 | (( hdr.s0_output0_calc.s0_output_1_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_1_2 = (bit<32>) hdr.s0_output0_calc.s0_output_1_2 | (( hdr.s0_output0_calc.s0_output_1_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_1_3 = (bit<32>) hdr.s0_output0_calc.s0_output_1_3 | (( hdr.s0_output0_calc.s0_output_1_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_1_4 = (bit<32>) hdr.s0_output0_calc.s0_output_1_4 | (( hdr.s0_output0_calc.s0_output_1_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_1_5 = (bit<32>) hdr.s0_output0_calc.s0_output_1_5 | (( hdr.s0_output0_calc.s0_output_1_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_2_0 = (bit<32>) hdr.s0_output0_calc.s0_output_2_0 | (( hdr.s0_output0_calc.s0_output_2_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_2_1 = (bit<32>) hdr.s0_output0_calc.s0_output_2_1 | (( hdr.s0_output0_calc.s0_output_2_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_2_2 = (bit<32>) hdr.s0_output0_calc.s0_output_2_2 | (( hdr.s0_output0_calc.s0_output_2_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_2_3 = (bit<32>) hdr.s0_output0_calc.s0_output_2_3 | (( hdr.s0_output0_calc.s0_output_2_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_2_4 = (bit<32>) hdr.s0_output0_calc.s0_output_2_4 | (( hdr.s0_output0_calc.s0_output_2_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_2_5 = (bit<32>) hdr.s0_output0_calc.s0_output_2_5 | (( hdr.s0_output0_calc.s0_output_2_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_3_0 = (bit<32>) hdr.s0_output0_calc.s0_output_3_0 | (( hdr.s0_output0_calc.s0_output_3_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_3_1 = (bit<32>) hdr.s0_output0_calc.s0_output_3_1 | (( hdr.s0_output0_calc.s0_output_3_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_3_2 = (bit<32>) hdr.s0_output0_calc.s0_output_3_2 | (( hdr.s0_output0_calc.s0_output_3_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_3_3 = (bit<32>) hdr.s0_output0_calc.s0_output_3_3 | (( hdr.s0_output0_calc.s0_output_3_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_3_4 = (bit<32>) hdr.s0_output0_calc.s0_output_3_4 | (( hdr.s0_output0_calc.s0_output_3_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_3_5 = (bit<32>) hdr.s0_output0_calc.s0_output_3_5 | (( hdr.s0_output0_calc.s0_output_3_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_4_0 = (bit<32>) hdr.s0_output0_calc.s0_output_4_0 | (( hdr.s0_output0_calc.s0_output_4_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_4_1 = (bit<32>) hdr.s0_output0_calc.s0_output_4_1 | (( hdr.s0_output0_calc.s0_output_4_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_4_2 = (bit<32>) hdr.s0_output0_calc.s0_output_4_2 | (( hdr.s0_output0_calc.s0_output_4_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_4_3 = (bit<32>) hdr.s0_output0_calc.s0_output_4_3 | (( hdr.s0_output0_calc.s0_output_4_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_4_4 = (bit<32>) hdr.s0_output0_calc.s0_output_4_4 | (( hdr.s0_output0_calc.s0_output_4_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_4_5 = (bit<32>) hdr.s0_output0_calc.s0_output_4_5 | (( hdr.s0_output0_calc.s0_output_4_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_5_0 = (bit<32>) hdr.s0_output0_calc.s0_output_5_0 | (( hdr.s0_output0_calc.s0_output_5_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_5_1 = (bit<32>) hdr.s0_output0_calc.s0_output_5_1 | (( hdr.s0_output0_calc.s0_output_5_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_5_2 = (bit<32>) hdr.s0_output0_calc.s0_output_5_2 | (( hdr.s0_output0_calc.s0_output_5_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_5_3 = (bit<32>) hdr.s0_output0_calc.s0_output_5_3 | (( hdr.s0_output0_calc.s0_output_5_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_5_4 = (bit<32>) hdr.s0_output0_calc.s0_output_5_4 | (( hdr.s0_output0_calc.s0_output_5_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_5_5 = (bit<32>) hdr.s0_output0_calc.s0_output_5_5 | (( hdr.s0_output0_calc.s0_output_5_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_6_0 = (bit<32>) hdr.s0_output0_calc.s0_output_6_0 | (( hdr.s0_output0_calc.s0_output_6_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_6_1 = (bit<32>) hdr.s0_output0_calc.s0_output_6_1 | (( hdr.s0_output0_calc.s0_output_6_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_6_2 = (bit<32>) hdr.s0_output0_calc.s0_output_6_2 | (( hdr.s0_output0_calc.s0_output_6_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_6_3 = (bit<32>) hdr.s0_output0_calc.s0_output_6_3 | (( hdr.s0_output0_calc.s0_output_6_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_6_4 = (bit<32>) hdr.s0_output0_calc.s0_output_6_4 | (( hdr.s0_output0_calc.s0_output_6_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_6_5 = (bit<32>) hdr.s0_output0_calc.s0_output_6_5 | (( hdr.s0_output0_calc.s0_output_6_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_7_0 = (bit<32>) hdr.s0_output0_calc.s0_output_7_0 | (( hdr.s0_output0_calc.s0_output_7_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_7_1 = (bit<32>) hdr.s0_output0_calc.s0_output_7_1 | (( hdr.s0_output0_calc.s0_output_7_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_7_2 = (bit<32>) hdr.s0_output0_calc.s0_output_7_2 | (( hdr.s0_output0_calc.s0_output_7_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_7_3 = (bit<32>) hdr.s0_output0_calc.s0_output_7_3 | (( hdr.s0_output0_calc.s0_output_7_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_7_4 = (bit<32>) hdr.s0_output0_calc.s0_output_7_4 | (( hdr.s0_output0_calc.s0_output_7_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_7_5 = (bit<32>) hdr.s0_output0_calc.s0_output_7_5 | (( hdr.s0_output0_calc.s0_output_7_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+
+        hdr.s0_output0_calc.s0_output_0_0 = (gamma_0 * s0_output_0_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_0_1 = (gamma_1 * s0_output_0_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_0_2 = (gamma_2 * s0_output_0_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_0_3 = (gamma_3 * s0_output_0_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_0_4 = (gamma_4 * s0_output_0_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_0_5 = (gamma_5 * s0_output_0_5)[23:8] + beta_5;
+        hdr.s0_output0_calc.s0_output_1_0 = (gamma_0 * s0_output_1_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_1_1 = (gamma_1 * s0_output_1_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_1_2 = (gamma_2 * s0_output_1_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_1_3 = (gamma_3 * s0_output_1_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_1_4 = (gamma_4 * s0_output_1_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_1_5 = (gamma_5 * s0_output_1_5)[23:8] + beta_5;
+        hdr.s0_output0_calc.s0_output_2_0 = (gamma_0 * s0_output_2_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_2_1 = (gamma_1 * s0_output_2_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_2_2 = (gamma_2 * s0_output_2_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_2_3 = (gamma_3 * s0_output_2_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_2_4 = (gamma_4 * s0_output_2_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_2_5 = (gamma_5 * s0_output_2_5)[23:8] + beta_5;
+        hdr.s0_output0_calc.s0_output_3_0 = (gamma_0 * s0_output_3_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_3_1 = (gamma_1 * s0_output_3_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_3_2 = (gamma_2 * s0_output_3_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_3_3 = (gamma_3 * s0_output_3_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_3_4 = (gamma_4 * s0_output_3_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_3_5 = (gamma_5 * s0_output_3_5)[23:8] + beta_5;
+        hdr.s0_output0_calc.s0_output_4_0 = (gamma_0 * s0_output_4_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_4_1 = (gamma_1 * s0_output_4_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_4_2 = (gamma_2 * s0_output_4_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_4_3 = (gamma_3 * s0_output_4_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_4_4 = (gamma_4 * s0_output_4_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_4_5 = (gamma_5 * s0_output_4_5)[23:8] + beta_5;
+        hdr.s0_output0_calc.s0_output_5_0 = (gamma_0 * s0_output_5_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_5_1 = (gamma_1 * s0_output_5_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_5_2 = (gamma_2 * s0_output_5_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_5_3 = (gamma_3 * s0_output_5_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_5_4 = (gamma_4 * s0_output_5_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_5_5 = (gamma_5 * s0_output_5_5)[23:8] + beta_5;
+        hdr.s0_output0_calc.s0_output_6_0 = (gamma_0 * s0_output_6_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_6_1 = (gamma_1 * s0_output_6_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_6_2 = (gamma_2 * s0_output_6_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_6_3 = (gamma_3 * s0_output_6_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_6_4 = (gamma_4 * s0_output_6_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_6_5 = (gamma_5 * s0_output_6_5)[23:8] + beta_5;
+        hdr.s0_output0_calc.s0_output_7_0 = (gamma_0 * s0_output_7_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_7_1 = (gamma_1 * s0_output_7_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_7_2 = (gamma_2 * s0_output_7_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_7_3 = (gamma_3 * s0_output_7_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_7_4 = (gamma_4 * s0_output_7_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_7_5 = (gamma_5 * s0_output_7_5)[23:8] + beta_5;
     }
     
 
@@ -1451,7 +1582,7 @@ control MyComputeChecksum(inout headers hdr, inout metadata meta) {
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
         packet.emit(hdr.ethernet);
-        packet.emit(hdr.ptp);
+        packet.emit(hdr.feature);
         packet.emit(hdr.p4calc);
         packet.emit(hdr.s0_output0_calc);
         packet.emit(hdr.s1_output0_calc);

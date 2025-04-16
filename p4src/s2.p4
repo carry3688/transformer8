@@ -16,60 +16,78 @@ const bit<8>  P4CALC_P     = 0x50;   // 'P'
 const bit<8>  P4CALC_4     = 0x34;   // '4'
 const bit<8>  P4CALC_VER   = 0x01;   // v0.1
 
-const bit<16> ETHERTYPE_PTP  = 0x88F7;
+// wo矩阵
+const bit<32> w0_0_0 = 0x0000005C;
+const bit<32> w0_0_1 = 0xFFFFFFAD;
+const bit<32> w0_0_2 = 0x00000045;
+const bit<32> w0_0_3 = 0xFFFFFFD1;
+const bit<32> w0_0_4 = 0xFFFFFFCE;
+const bit<32> w0_0_5 = 0xFFFFFFFC;
 
-const bit<32> w0_0_0 = 0xffffb44c;
-const bit<32> w0_0_1 = 0xfffff03d;
-const bit<32> w0_0_2 = 0xffffcc54;
-const bit<32> w0_0_3 = 0x00005dcc;
-const bit<32> w0_0_4 = 0xfffff64a;
-const bit<32> w0_0_5 = 0x0000226d;
-const bit<32> w0_1_0 = 0x000057d6;
-const bit<32> w0_1_1 = 0xffff89cc;
-const bit<32> w0_1_2 = 0x00005958;
-const bit<32> w0_1_3 = 0x00006acc;
-const bit<32> w0_1_4 = 0xfffff0d1;
-const bit<32> w0_1_5 = 0xffff9963;
-const bit<32> w0_2_0 = 0x00007af1;
-const bit<32> w0_2_1 = 0x00001ed8;
-const bit<32> w0_2_2 = 0xffffb6f3;
-const bit<32> w0_2_3 = 0x00007bf2;
-const bit<32> w0_2_4 = 0xffffa0e9;
-const bit<32> w0_2_5 = 0x00005182;
-const bit<32> w0_3_0 = 0xffffedfb;
-const bit<32> w0_3_1 = 0x00001e21;
-const bit<32> w0_3_2 = 0xffffc5ae;
-const bit<32> w0_3_3 = 0x00001468;
-const bit<32> w0_3_4 = 0x000069f9;
-const bit<32> w0_3_5 = 0xffffec6f;
-const bit<32> w0_4_0 = 0xffffb1ff;
-const bit<32> w0_4_1 = 0xffffc3fd;
-const bit<32> w0_4_2 = 0xfffff532;
-const bit<32> w0_4_3 = 0x00007c6d;
-const bit<32> w0_4_4 = 0xffffbcac;
-const bit<32> w0_4_5 = 0x00002354;
-const bit<32> w0_5_0 = 0xffffab84;
-const bit<32> w0_5_1 = 0xffffe6f4;
-const bit<32> w0_5_2 = 0x00007e53;
-const bit<32> w0_5_3 = 0x00004455;
-const bit<32> w0_5_4 = 0xffff8d6f;
-const bit<32> w0_5_5 = 0xffffd6d2;
+const bit<32> w0_1_0 = 0x00000027;
+const bit<32> w0_1_1 = 0xFFFFFFDB;
+const bit<32> w0_1_2 = 0x0000001F;
+const bit<32> w0_1_3 = 0x00000092;
+const bit<32> w0_1_4 = 0xFFFFFFDD;
+const bit<32> w0_1_5 = 0xFFFFFFF3;
 
-header ptp_t {
-    bit<4>   transport_specifics;
-    bit<4>   message_type;
-    bit<4>   reserved1;
-    bit<4>   version;
-    bit<16>  message_legth;
-    bit<8>   domain_number;
-    bit<8>   reserved2;
-    bit<16>  flagfiled;
-    bit<64>  correction_field;
-    bit<32>  reserved3;
-    bit<80>  source_port_identity;
-    bit<16>  sequence_id;
-    bit<8>   control_field;
-    bit<8>   log_message_interval;
+const bit<32> w0_2_0 = 0x00000016;
+const bit<32> w0_2_1 = 0xFFFFFFE3;
+const bit<32> w0_2_2 = 0x0000003E;
+const bit<32> w0_2_3 = 0x00000035;
+const bit<32> w0_2_4 = 0xFFFFFFE9;
+const bit<32> w0_2_5 = 0x00000049;
+
+const bit<32> w0_3_0 = 0xFFFFFFDF;
+const bit<32> w0_3_1 = 0xFFFFFFD3;
+const bit<32> w0_3_2 = 0xFFFFFFF5;
+const bit<32> w0_3_3 = 0xFFFFFFDF;
+const bit<32> w0_3_4 = 0x00000045;
+const bit<32> w0_3_5 = 0xFFFFFF9E;
+
+const bit<32> w0_4_0 = 0x00000039;
+const bit<32> w0_4_1 = 0x00000000;
+const bit<32> w0_4_2 = 0x00000018;
+const bit<32> w0_4_3 = 0x00000004;
+const bit<32> w0_4_4 = 0xFFFFFFF2;
+const bit<32> w0_4_5 = 0x0000006A;
+
+const bit<32> w0_5_0 = 0xFFFFFFAE;
+const bit<32> w0_5_1 = 0xFFFFFFD7;
+const bit<32> w0_5_2 = 0xFFFFFFD3;
+const bit<32> w0_5_3 = 0x00000048;
+const bit<32> w0_5_4 = 0x0000006A;
+const bit<32> w0_5_5 = 0xFFFFFFDE;
+
+const bit<16> w0_bias_0 = 0xFFDF;
+const bit<16> w0_bias_1 = 0xFFA8;
+const bit<16> w0_bias_2 = 0x0021;
+const bit<16> w0_bias_3 = 0x0037;
+const bit<16> w0_bias_4 = 0x0033;
+const bit<16> w0_bias_5 = 0x0019;
+
+// norm
+const bit<32> gamma_0 = 0x0000010C;
+const bit<32> gamma_1 = 0x00000113;
+const bit<32> gamma_2 = 0x00000101;
+const bit<32> gamma_3 = 0x00000114;
+const bit<32> gamma_4 = 0x000000DC;
+const bit<32> gamma_5 = 0x00000117;
+
+const bit<16> beta_0 = 0x0000;
+const bit<16> beta_1 = 0x000A;
+const bit<16> beta_2 = 0x0005;
+const bit<16> beta_3 = 0xFFE5;
+const bit<16> beta_4 = 0x0000;
+const bit<16> beta_5 = 0xFFED;
+
+header feature_t {
+    bit<16> feature_0;
+    bit<16> feature_1;
+    bit<16> feature_2;
+    bit<16> feature_3;
+    bit<16> feature_4;
+    bit<16> feature_5;
 }
 
 header p4calc_t {
@@ -186,13 +204,28 @@ header s1_output0_calc_t {
 }
 
 header s7_output0_calc_t {
-    bit<16> s7_before_sigmoid;
-    bit<16> s7_output;
+    bit<16> s7_before_sigmoid_0;
+    bit<16> s7_before_sigmoid_1;
+    bit<16> s7_before_sigmoid_2;
+    bit<16> s7_before_sigmoid_3;
+    bit<16> s7_before_sigmoid_4;
+    bit<16> s7_before_sigmoid_5;
+    bit<16> s7_before_sigmoid_6;
+    bit<16> s7_before_sigmoid_7;
+
+    bit<16> s7_output_0;
+    bit<16> s7_output_1;
+    bit<16> s7_output_2;
+    bit<16> s7_output_3;
+    bit<16> s7_output_4;
+    bit<16> s7_output_5;
+    bit<16> s7_output_6;
+    bit<16> s7_output_7;
 }
 
 struct headers {
     ethernet_t   ethernet;
-    ptp_t       ptp;
+    feature_t       feature;
     p4calc_t     p4calc;
     s0_output0_calc_t s0_output0_calc;
     s1_output0_calc_t s1_output0_calc;
@@ -285,14 +318,13 @@ parser MyParser(packet_in packet,
     state start {
         packet.extract(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {
-            ETHERTYPE_PTP : parse_ptp;
-            P4CALC_ETYPE : check_p4calc;
+            P4CALC_ETYPE : parse_feature;
             default      : accept;
         }
     }
 
-    state parse_ptp {
-        packet.extract(hdr.ptp);
+    state parse_feature {
+        packet.extract(hdr.feature);
         transition check_p4calc;
     }
 
@@ -607,6 +639,43 @@ control MyIngress(inout headers hdr,
         bit<16> output16_7_4 = (output32_7_0 *w0_0_4 + output32_7_1 *w0_1_4 + output32_7_2 *w0_2_4 + output32_7_3 *w0_3_4 + output32_7_4 *w0_4_4 + output32_7_5 *w0_5_4)[23:8];
         bit<16> output16_7_5 = (output32_7_0 *w0_0_5 + output32_7_1 *w0_1_5 + output32_7_2 *w0_2_5 + output32_7_3 *w0_3_5 + output32_7_4 *w0_4_5 + output32_7_5 *w0_5_5)[23:8];
         
+        output16_0_0 = output16_0_0 + w0_bias_0;
+        output16_0_1 = output16_0_1 + w0_bias_1;
+        output16_0_2 = output16_0_2 + w0_bias_2;
+        output16_0_3 = output16_0_3 + w0_bias_3;
+        output16_0_4 = output16_0_4 + w0_bias_4;
+        output16_0_5 = output16_0_5 + w0_bias_5;
+        output16_1_0 = output16_1_0 + w0_bias_0;
+        output16_1_1 = output16_1_1 + w0_bias_1;
+        output16_1_2 = output16_1_2 + w0_bias_2;
+        output16_1_3 = output16_1_3 + w0_bias_3;
+        output16_1_4 = output16_1_4 + w0_bias_4;
+        output16_1_5 = output16_1_5 + w0_bias_5;
+        output16_2_0 = output16_2_0 + w0_bias_0;
+        output16_2_1 = output16_2_1 + w0_bias_1;
+        output16_2_2 = output16_2_2 + w0_bias_2;
+        output16_2_3 = output16_2_3 + w0_bias_3;
+        output16_2_4 = output16_2_4 + w0_bias_4;
+        output16_2_5 = output16_2_5 + w0_bias_5;
+        output16_3_0 = output16_3_0 + w0_bias_0;
+        output16_3_1 = output16_3_1 + w0_bias_1;
+        output16_3_2 = output16_3_2 + w0_bias_2;
+        output16_3_3 = output16_3_3 + w0_bias_3;
+        output16_3_4 = output16_3_4 + w0_bias_4;
+        output16_3_5 = output16_3_5 + w0_bias_5;
+        output16_4_0 = output16_4_0 + w0_bias_0;
+        output16_4_1 = output16_4_1 + w0_bias_1;
+        output16_4_2 = output16_4_2 + w0_bias_2;
+        output16_4_3 = output16_4_3 + w0_bias_3;
+        output16_4_4 = output16_4_4 + w0_bias_4;
+        output16_4_5 = output16_4_5 + w0_bias_5;
+        output16_5_0 = output16_5_0 + w0_bias_0;
+        output16_5_1 = output16_5_1 + w0_bias_1;
+        output16_5_2 = output16_5_2 + w0_bias_2;
+        output16_5_3 = output16_5_3 + w0_bias_3;
+        output16_5_4 = output16_5_4 + w0_bias_4;
+        output16_5_5 = output16_5_5 + w0_bias_5;
+
         // 残差连接，结果放在hdr.s1_output0_calc里
         hdr.s0_output0_calc.s0_output_0_0 = output16_0_0 + hdr.s0_output0_calc.s0_output_0_0;
         hdr.s0_output0_calc.s0_output_0_1 = output16_0_1 + hdr.s0_output0_calc.s0_output_0_1;
@@ -889,6 +958,42 @@ control MyIngress(inout headers hdr,
         bit<16> output16_7_4 = (output32_7_0 *w0_0_4 + output32_7_1 *w0_1_4 + output32_7_2 *w0_2_4 + output32_7_3 *w0_3_4 + output32_7_4 *w0_4_4 + output32_7_5 *w0_5_4)[23:8];
         bit<16> output16_7_5 = (output32_7_0 *w0_0_5 + output32_7_1 *w0_1_5 + output32_7_2 *w0_2_5 + output32_7_3 *w0_3_5 + output32_7_4 *w0_4_5 + output32_7_5 *w0_5_5)[23:8];
         
+        output16_0_0 = output16_0_0 + w0_bias_0;
+        output16_0_1 = output16_0_1 + w0_bias_1;
+        output16_0_2 = output16_0_2 + w0_bias_2;
+        output16_0_3 = output16_0_3 + w0_bias_3;
+        output16_0_4 = output16_0_4 + w0_bias_4;
+        output16_0_5 = output16_0_5 + w0_bias_5;
+        output16_1_0 = output16_1_0 + w0_bias_0;
+        output16_1_1 = output16_1_1 + w0_bias_1;
+        output16_1_2 = output16_1_2 + w0_bias_2;
+        output16_1_3 = output16_1_3 + w0_bias_3;
+        output16_1_4 = output16_1_4 + w0_bias_4;
+        output16_1_5 = output16_1_5 + w0_bias_5;
+        output16_2_0 = output16_2_0 + w0_bias_0;
+        output16_2_1 = output16_2_1 + w0_bias_1;
+        output16_2_2 = output16_2_2 + w0_bias_2;
+        output16_2_3 = output16_2_3 + w0_bias_3;
+        output16_2_4 = output16_2_4 + w0_bias_4;
+        output16_2_5 = output16_2_5 + w0_bias_5;
+        output16_3_0 = output16_3_0 + w0_bias_0;
+        output16_3_1 = output16_3_1 + w0_bias_1;
+        output16_3_2 = output16_3_2 + w0_bias_2;
+        output16_3_3 = output16_3_3 + w0_bias_3;
+        output16_3_4 = output16_3_4 + w0_bias_4;
+        output16_3_5 = output16_3_5 + w0_bias_5;
+        output16_4_0 = output16_4_0 + w0_bias_0;
+        output16_4_1 = output16_4_1 + w0_bias_1;
+        output16_4_2 = output16_4_2 + w0_bias_2;
+        output16_4_3 = output16_4_3 + w0_bias_3;
+        output16_4_4 = output16_4_4 + w0_bias_4;
+        output16_4_5 = output16_4_5 + w0_bias_5;
+        output16_5_0 = output16_5_0 + w0_bias_0;
+        output16_5_1 = output16_5_1 + w0_bias_1;
+        output16_5_2 = output16_5_2 + w0_bias_2;
+        output16_5_3 = output16_5_3 + w0_bias_3;
+        output16_5_4 = output16_5_4 + w0_bias_4;
+        output16_5_5 = output16_5_5 + w0_bias_5;
 
         // 残差连接，结果放在hdr.s1_output0_calc里
         hdr.s0_output0_calc.s0_output_0_0 = output16_0_0 + hdr.s0_output0_calc.s0_output_0_0;
@@ -1450,6 +1555,104 @@ control MyIngress(inout headers hdr,
         hdr.s0_output0_calc.s0_output_7_3 = (deviation_7_3 * inv_sqrt_var_7)[23:8];
         hdr.s0_output0_calc.s0_output_7_4 = (deviation_7_4 * inv_sqrt_var_7)[23:8];
         hdr.s0_output0_calc.s0_output_7_5 = (deviation_7_5 * inv_sqrt_var_7)[23:8];
+
+        bit<32> s0_output_0_0 = (bit<32>) hdr.s0_output0_calc.s0_output_0_0 | (( hdr.s0_output0_calc.s0_output_0_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_0_1 = (bit<32>) hdr.s0_output0_calc.s0_output_0_1 | (( hdr.s0_output0_calc.s0_output_0_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_0_2 = (bit<32>) hdr.s0_output0_calc.s0_output_0_2 | (( hdr.s0_output0_calc.s0_output_0_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_0_3 = (bit<32>) hdr.s0_output0_calc.s0_output_0_3 | (( hdr.s0_output0_calc.s0_output_0_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_0_4 = (bit<32>) hdr.s0_output0_calc.s0_output_0_4 | (( hdr.s0_output0_calc.s0_output_0_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_0_5 = (bit<32>) hdr.s0_output0_calc.s0_output_0_5 | (( hdr.s0_output0_calc.s0_output_0_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_1_0 = (bit<32>) hdr.s0_output0_calc.s0_output_1_0 | (( hdr.s0_output0_calc.s0_output_1_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_1_1 = (bit<32>) hdr.s0_output0_calc.s0_output_1_1 | (( hdr.s0_output0_calc.s0_output_1_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_1_2 = (bit<32>) hdr.s0_output0_calc.s0_output_1_2 | (( hdr.s0_output0_calc.s0_output_1_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_1_3 = (bit<32>) hdr.s0_output0_calc.s0_output_1_3 | (( hdr.s0_output0_calc.s0_output_1_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_1_4 = (bit<32>) hdr.s0_output0_calc.s0_output_1_4 | (( hdr.s0_output0_calc.s0_output_1_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_1_5 = (bit<32>) hdr.s0_output0_calc.s0_output_1_5 | (( hdr.s0_output0_calc.s0_output_1_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_2_0 = (bit<32>) hdr.s0_output0_calc.s0_output_2_0 | (( hdr.s0_output0_calc.s0_output_2_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_2_1 = (bit<32>) hdr.s0_output0_calc.s0_output_2_1 | (( hdr.s0_output0_calc.s0_output_2_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_2_2 = (bit<32>) hdr.s0_output0_calc.s0_output_2_2 | (( hdr.s0_output0_calc.s0_output_2_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_2_3 = (bit<32>) hdr.s0_output0_calc.s0_output_2_3 | (( hdr.s0_output0_calc.s0_output_2_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_2_4 = (bit<32>) hdr.s0_output0_calc.s0_output_2_4 | (( hdr.s0_output0_calc.s0_output_2_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_2_5 = (bit<32>) hdr.s0_output0_calc.s0_output_2_5 | (( hdr.s0_output0_calc.s0_output_2_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_3_0 = (bit<32>) hdr.s0_output0_calc.s0_output_3_0 | (( hdr.s0_output0_calc.s0_output_3_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_3_1 = (bit<32>) hdr.s0_output0_calc.s0_output_3_1 | (( hdr.s0_output0_calc.s0_output_3_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_3_2 = (bit<32>) hdr.s0_output0_calc.s0_output_3_2 | (( hdr.s0_output0_calc.s0_output_3_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_3_3 = (bit<32>) hdr.s0_output0_calc.s0_output_3_3 | (( hdr.s0_output0_calc.s0_output_3_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_3_4 = (bit<32>) hdr.s0_output0_calc.s0_output_3_4 | (( hdr.s0_output0_calc.s0_output_3_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_3_5 = (bit<32>) hdr.s0_output0_calc.s0_output_3_5 | (( hdr.s0_output0_calc.s0_output_3_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_4_0 = (bit<32>) hdr.s0_output0_calc.s0_output_4_0 | (( hdr.s0_output0_calc.s0_output_4_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_4_1 = (bit<32>) hdr.s0_output0_calc.s0_output_4_1 | (( hdr.s0_output0_calc.s0_output_4_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_4_2 = (bit<32>) hdr.s0_output0_calc.s0_output_4_2 | (( hdr.s0_output0_calc.s0_output_4_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_4_3 = (bit<32>) hdr.s0_output0_calc.s0_output_4_3 | (( hdr.s0_output0_calc.s0_output_4_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_4_4 = (bit<32>) hdr.s0_output0_calc.s0_output_4_4 | (( hdr.s0_output0_calc.s0_output_4_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_4_5 = (bit<32>) hdr.s0_output0_calc.s0_output_4_5 | (( hdr.s0_output0_calc.s0_output_4_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_5_0 = (bit<32>) hdr.s0_output0_calc.s0_output_5_0 | (( hdr.s0_output0_calc.s0_output_5_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_5_1 = (bit<32>) hdr.s0_output0_calc.s0_output_5_1 | (( hdr.s0_output0_calc.s0_output_5_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_5_2 = (bit<32>) hdr.s0_output0_calc.s0_output_5_2 | (( hdr.s0_output0_calc.s0_output_5_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_5_3 = (bit<32>) hdr.s0_output0_calc.s0_output_5_3 | (( hdr.s0_output0_calc.s0_output_5_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_5_4 = (bit<32>) hdr.s0_output0_calc.s0_output_5_4 | (( hdr.s0_output0_calc.s0_output_5_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_5_5 = (bit<32>) hdr.s0_output0_calc.s0_output_5_5 | (( hdr.s0_output0_calc.s0_output_5_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_6_0 = (bit<32>) hdr.s0_output0_calc.s0_output_6_0 | (( hdr.s0_output0_calc.s0_output_6_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_6_1 = (bit<32>) hdr.s0_output0_calc.s0_output_6_1 | (( hdr.s0_output0_calc.s0_output_6_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_6_2 = (bit<32>) hdr.s0_output0_calc.s0_output_6_2 | (( hdr.s0_output0_calc.s0_output_6_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_6_3 = (bit<32>) hdr.s0_output0_calc.s0_output_6_3 | (( hdr.s0_output0_calc.s0_output_6_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_6_4 = (bit<32>) hdr.s0_output0_calc.s0_output_6_4 | (( hdr.s0_output0_calc.s0_output_6_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_6_5 = (bit<32>) hdr.s0_output0_calc.s0_output_6_5 | (( hdr.s0_output0_calc.s0_output_6_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_7_0 = (bit<32>) hdr.s0_output0_calc.s0_output_7_0 | (( hdr.s0_output0_calc.s0_output_7_0 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_7_1 = (bit<32>) hdr.s0_output0_calc.s0_output_7_1 | (( hdr.s0_output0_calc.s0_output_7_1 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_7_2 = (bit<32>) hdr.s0_output0_calc.s0_output_7_2 | (( hdr.s0_output0_calc.s0_output_7_2 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_7_3 = (bit<32>) hdr.s0_output0_calc.s0_output_7_3 | (( hdr.s0_output0_calc.s0_output_7_3 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_7_4 = (bit<32>) hdr.s0_output0_calc.s0_output_7_4 | (( hdr.s0_output0_calc.s0_output_7_4 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+        bit<32> s0_output_7_5 = (bit<32>) hdr.s0_output0_calc.s0_output_7_5 | (( hdr.s0_output0_calc.s0_output_7_5 & 0x8000) != 0 ? 32w0xFFFF0000 : 32w0x00000000);
+
+        hdr.s0_output0_calc.s0_output_0_0 = (gamma_0 * s0_output_0_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_0_1 = (gamma_1 * s0_output_0_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_0_2 = (gamma_2 * s0_output_0_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_0_3 = (gamma_3 * s0_output_0_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_0_4 = (gamma_4 * s0_output_0_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_0_5 = (gamma_5 * s0_output_0_5)[23:8] + beta_5;
+        hdr.s0_output0_calc.s0_output_1_0 = (gamma_0 * s0_output_1_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_1_1 = (gamma_1 * s0_output_1_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_1_2 = (gamma_2 * s0_output_1_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_1_3 = (gamma_3 * s0_output_1_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_1_4 = (gamma_4 * s0_output_1_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_1_5 = (gamma_5 * s0_output_1_5)[23:8] + beta_5;
+        hdr.s0_output0_calc.s0_output_2_0 = (gamma_0 * s0_output_2_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_2_1 = (gamma_1 * s0_output_2_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_2_2 = (gamma_2 * s0_output_2_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_2_3 = (gamma_3 * s0_output_2_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_2_4 = (gamma_4 * s0_output_2_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_2_5 = (gamma_5 * s0_output_2_5)[23:8] + beta_5;
+        hdr.s0_output0_calc.s0_output_3_0 = (gamma_0 * s0_output_3_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_3_1 = (gamma_1 * s0_output_3_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_3_2 = (gamma_2 * s0_output_3_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_3_3 = (gamma_3 * s0_output_3_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_3_4 = (gamma_4 * s0_output_3_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_3_5 = (gamma_5 * s0_output_3_5)[23:8] + beta_5;
+        hdr.s0_output0_calc.s0_output_4_0 = (gamma_0 * s0_output_4_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_4_1 = (gamma_1 * s0_output_4_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_4_2 = (gamma_2 * s0_output_4_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_4_3 = (gamma_3 * s0_output_4_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_4_4 = (gamma_4 * s0_output_4_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_4_5 = (gamma_5 * s0_output_4_5)[23:8] + beta_5;
+        hdr.s0_output0_calc.s0_output_5_0 = (gamma_0 * s0_output_5_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_5_1 = (gamma_1 * s0_output_5_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_5_2 = (gamma_2 * s0_output_5_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_5_3 = (gamma_3 * s0_output_5_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_5_4 = (gamma_4 * s0_output_5_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_5_5 = (gamma_5 * s0_output_5_5)[23:8] + beta_5;
+        hdr.s0_output0_calc.s0_output_6_0 = (gamma_0 * s0_output_6_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_6_1 = (gamma_1 * s0_output_6_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_6_2 = (gamma_2 * s0_output_6_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_6_3 = (gamma_3 * s0_output_6_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_6_4 = (gamma_4 * s0_output_6_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_6_5 = (gamma_5 * s0_output_6_5)[23:8] + beta_5;
+        hdr.s0_output0_calc.s0_output_7_0 = (gamma_0 * s0_output_7_0)[23:8] + beta_0;
+        hdr.s0_output0_calc.s0_output_7_1 = (gamma_1 * s0_output_7_1)[23:8] + beta_1;
+        hdr.s0_output0_calc.s0_output_7_2 = (gamma_2 * s0_output_7_2)[23:8] + beta_2;
+        hdr.s0_output0_calc.s0_output_7_3 = (gamma_3 * s0_output_7_3)[23:8] + beta_3;
+        hdr.s0_output0_calc.s0_output_7_4 = (gamma_4 * s0_output_7_4)[23:8] + beta_4;
+        hdr.s0_output0_calc.s0_output_7_5 = (gamma_5 * s0_output_7_5)[23:8] + beta_5;
     }
 
 
@@ -1500,7 +1703,7 @@ control MyComputeChecksum(inout headers hdr, inout metadata meta) {
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
         packet.emit(hdr.ethernet);
-        packet.emit(hdr.ptp);
+        packet.emit(hdr.feature);
         packet.emit(hdr.p4calc);
         packet.emit(hdr.s0_output0_calc);
         packet.emit(hdr.s1_output0_calc);

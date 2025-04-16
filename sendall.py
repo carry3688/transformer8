@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-import argparse
+import pandas as pd
+import numpy as np
 import sys
 import socket
 import random
 import struct
-
+import ipaddress
 from scapy.all import sendp, get_if_list, get_if_hwaddr, Ether
 from scapy.fields import *
 from scapy.packet import Packet
@@ -14,20 +15,12 @@ class P4calc(Packet):
     fields_desc = [
         # ptp input
         
-        BitField("transport_specifics", 0 ,4),
-        BitField("message_type", 0 ,4),
-        BitField("reserved1", 0 ,4),
-        BitField("version", 0 ,4),
-        BitField("message_legth", 0 ,16),
-        BitField("domain_number", 0 ,8),
-        BitField("reserved2", 0 ,8),
-        BitField("flagfiled", 0 ,16),
-        BitField("correction_field", 0 ,64),
-        BitField("reserved3", 0 ,32),
-        BitField("source_port_identity", 0 ,80),
-        BitField("sequence_id", 0 ,16),
-        BitField("control_field", 0 ,8),
-        BitField("log_message_interval", 0 ,8),
+        BitField("feature_0", 0 ,16),
+        BitField("feature_1", 0 ,16),
+        BitField("feature_2", 0 ,16),
+        BitField("feature_3", 0 ,16),
+        BitField("feature_4", 0 ,16),
+        BitField("feature_5", 0 ,16),
 
         StrFixedLenField("p", "P", length=1),
         StrFixedLenField("four", "4", length=1), 
@@ -136,10 +129,29 @@ class P4calc(Packet):
         BitField("s1_output_7_3", 0, 16),
         BitField("s1_output_7_4", 0, 16),
         BitField("s1_output_7_5", 0, 16),
-        BitField("s7_before_sigmoid", 0, 16),
-        BitField("s7_output", 0, 16),
+
+        # s7 output
+        BitField("s7_before_sigmoid_0", 0, 16),
+        BitField("s7_before_sigmoid_1", 0, 16),
+        BitField("s7_before_sigmoid_2", 0, 16),
+        BitField("s7_before_sigmoid_3", 0, 16),
+        BitField("s7_before_sigmoid_4", 0, 16),
+        BitField("s7_before_sigmoid_5", 0, 16),
+        BitField("s7_before_sigmoid_6", 0, 16),
+        BitField("s7_before_sigmoid_7", 0, 16),
+        BitField("s7_output_0", 0, 16),
+        BitField("s7_output_1", 0, 16),
+        BitField("s7_output_2", 0, 16),
+        BitField("s7_output_3", 0, 16),
+        BitField("s7_output_4", 0, 16),
+        BitField("s7_output_5", 0, 16),
+        BitField("s7_output_6", 0, 16),
+        BitField("s7_output_7", 0, 16),
     ]
 
+# -----------------------------
+# 获取接口名
+# -----------------------------
 def get_if():
     iface = None
     for i in get_if_list():
@@ -152,53 +164,44 @@ def get_if():
     return iface
 
 
+# -----------------------------
+# IP地址转换函数
+# -----------------------------
+def ip_to_int(ip_str):
+    try:
+        ip_str = str(ip_str).strip()
+        full_ip = int(ipaddress.IPv4Address(ip_str))
+        last_two_bytes = full_ip & 0xFFFF
+        return last_two_bytes
+    except:
+        return 0
+    
 def main():
-    mac_addresses = [
-        0x112233445566, 0x223344556677, 0x334455667788,
-        0x445566778899, 0x5566778899AA, 0x66778899AABB,
-        0x778899AABBCC, 0x8899AABBCCDD, 0x99AABBCCDDEE,
-        0xAABBCCDDEEFF, 0xBBCCDDEEFF00, 0xCCDDEEFF0011
-    ]
-
-    msg_lens = [1024, 2048, 4096, 8192, 16384]
-    seq_ids = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-    msg_types = [4, 5, 6, 7, 14, 15]  # 半字节
-    inter_arrival_times = [5, 10, 15, 20, 25]
-
+  
     iface = get_if()
+    df = pd.read_csv("test_data.csv")
+    features = ["Source IP", " Destination IP", " Flow Packets/s", " Flow IAT Max", " Protocol", " Flow IAT Mean"]
+    
+    df = df[features]
 
-    for i in range(40):
+    df = df.tail(2400).reset_index(drop=True)
+
+    for i in range(len(df)):
         # 按序选择字段
-        mac_source = mac_addresses[i % len(mac_addresses)]
-        mac_dest = mac_addresses[(i + 1) % len(mac_addresses)]
-        msg_len = msg_lens[i % len(msg_lens)]
-        seq_id = seq_ids[i % len(seq_ids)]
-        msg_type = msg_types[i % len(msg_types)]
-        inter_arrival_time = inter_arrival_times[i % len(inter_arrival_times)]
+        dst_mac = "00:00:0a:00:0a:02" 
         zero = 0
+        row = df.iloc[i]
 
-        # 转换为大端序
-        mac_source_be = int.from_bytes(pack(">Q", mac_source)[2:], "big")  # MAC 是 6 字节
-        mac_dest_be = int.from_bytes(pack(">Q", mac_dest)[2:], "big")
-        msg_len_be = int.from_bytes(pack(">H", msg_len), "big")  # msg_len 是 2 字节
-        seq_id_be = int.from_bytes(pack(">H", seq_id), "big")  # seq_id 是 2 字节
-
-        msg_type_be = msg_type & 0xF  # 确保只保留 4 位
-
-        inter_arrival_time_be = int.from_bytes(pack(">B", inter_arrival_time), "big")  # 间隔时间是 1 字节
-
-        mac_dest_str = f"{mac_dest:012x}"
-        dst_mac_bytes = ":".join(mac_dest_str[i:i+2] for i in range(0, len(mac_dest_str), 2))
-
-        p4calc_length = 437
         # 构造数据包
         pkt = Ether(
-            src=get_if_hwaddr(iface), dst=dst_mac_bytes, type=0x88F7
+            src=get_if_hwaddr(iface), dst=dst_mac, type=0x1234
         ) / P4calc(
-            message_legth=p4calc_length,
-            sequence_id=seq_id_be,
-            message_type=msg_type_be,
-            log_message_interval=inter_arrival_time_be,
+            feature_0=int(row[features[0]])*256,
+            feature_1=int(row[features[1]])*256,
+            feature_2=int(row[features[2]])*256,
+            feature_3=int(row[features[3]])*256,
+            feature_4=int(row[features[4]])*256,
+            feature_5=int(row[features[5]])*256,
         )
 
         sendp(pkt, iface=iface, verbose=False)

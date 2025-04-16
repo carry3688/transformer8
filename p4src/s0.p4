@@ -16,40 +16,14 @@ const bit<8>  P4CALC_P     = 0x50;   // 'P'
 const bit<8>  P4CALC_4     = 0x34;   // '4'
 const bit<8>  P4CALC_VER   = 0x01;   // v0.1
 
-//48位
-const bit<48> weight_mac_source = 0x12345678;
-const bit<48> bias_mac_source = 0x1;
-const bit<48> weight_mac_dest = 0x12345678;
-const bit<48> bias_mac_dest = 0x1;
-//16位
-const bit<16> weight_message_length = 0x1234;
-const bit<16> bias_message_length = 0x1;
-const bit<16> weight_sequence_id = 0x1234;
-const bit<16> bias_sequence_id = 0x1;
-//4、8位也采用16位映射
-const bit<16> weight_message_type = 0x1234;
-const bit<16> bias_message_type = 0x1;
-const bit<16> weight_inter_arrival_time = 0x1234;
-const bit<16> bias_inter_arrival_time = 0x1;
 
-
-const bit<16> ETHERTYPE_PTP  = 0x88F7;
-
-header ptp_t {
-    bit<4>   transport_specifics;
-    bit<4>   message_type;
-    bit<4>   reserved1;
-    bit<4>   version;
-    bit<16>  message_legth;
-    bit<8>   domain_number;
-    bit<8>   reserved2;
-    bit<16>  flagfiled;
-    bit<64>  correction_field;
-    bit<32>  reserved3;
-    bit<80>  source_port_identity;
-    bit<16>  sequence_id;
-    bit<8>   control_field;
-    bit<8>   log_message_interval;
+header feature_t {
+    bit<16> feature_0;
+    bit<16> feature_1;
+    bit<16> feature_2;
+    bit<16> feature_3;
+    bit<16> feature_4;
+    bit<16> feature_5;
 }
 
 header p4calc_t {
@@ -165,18 +139,34 @@ header s1_output0_calc_t {
 }
 
 header s7_output0_calc_t {
-    bit<16> s7_before_sigmoid;
-    bit<16> s7_output;
+    bit<16> s7_before_sigmoid_0;
+    bit<16> s7_before_sigmoid_1;
+    bit<16> s7_before_sigmoid_2;
+    bit<16> s7_before_sigmoid_3;
+    bit<16> s7_before_sigmoid_4;
+    bit<16> s7_before_sigmoid_5;
+    bit<16> s7_before_sigmoid_6;
+    bit<16> s7_before_sigmoid_7;
+
+    bit<16> s7_output_0;
+    bit<16> s7_output_1;
+    bit<16> s7_output_2;
+    bit<16> s7_output_3;
+    bit<16> s7_output_4;
+    bit<16> s7_output_5;
+    bit<16> s7_output_6;
+    bit<16> s7_output_7;
 }
 
 struct headers {
     ethernet_t   ethernet;
-    ptp_t       ptp;
+    feature_t       feature;
     p4calc_t     p4calc;
     s0_output0_calc_t s0_output0_calc;
     s1_output0_calc_t s1_output0_calc;
     s7_output0_calc_t s7_output0_calc;
 }
+
 struct ingress_metadata_t {
 }
 
@@ -196,14 +186,13 @@ parser MyParser(packet_in packet,
     state start {
         packet.extract(hdr.ethernet);
         transition select(hdr.ethernet.etherType) {
-            ETHERTYPE_PTP : parse_ptp;
-            P4CALC_ETYPE : check_p4calc;
+            P4CALC_ETYPE : parse_feature;
             default      : accept;
         }
     }
 
-    state parse_ptp {
-        packet.extract(hdr.ptp);
+    state parse_feature {
+        packet.extract(hdr.feature);
         transition check_p4calc;
     }
 
@@ -267,35 +256,12 @@ control MyIngress(inout headers hdr,
         seq_len.read(seq_len_num , 0);
         bit<32> seq_num = seq_len_num * 6;
 
-        //处理mac_source(48)
-        bit<48> transformed_mac_source = hdr.ethernet.srcAddr * weight_mac_source + bias_mac_source;
-        bit<16> transformed_mac_source_low_16bits = transformed_mac_source[15:0];  // 取低 16 位
-        input_data.write(seq_num, transformed_mac_source_low_16bits);
-
-        //处理mac_dest(48)
-        bit<48> transformed_mac_dest = hdr.ethernet.dstAddr * weight_mac_dest + bias_mac_dest;
-        bit<16> transformed_mac_dest_low_16bits = transformed_mac_dest[15:0];  // 取低 16 位
-        input_data.write(seq_num + 1, transformed_mac_dest_low_16bits);
-
-        //处理message_legth(16)
-        bit<16> result_msg_len_16bits = hdr.ptp.message_legth * weight_message_length + bias_message_length;
-        input_data.write(seq_num + 2, result_msg_len_16bits);
-
-        //处理sequence_id(16)
-        bit<16> result_seq_id_16bits = hdr.ptp.sequence_id * weight_sequence_id + bias_sequence_id;
-        input_data.write(seq_num + 3, result_seq_id_16bits);
-
-        //处理message_type(4)
-        bit<16> result_msg_type_16bits = 0;
-        result_msg_type_16bits[3:0] = hdr.ptp.message_type;
-        result_msg_type_16bits = result_msg_type_16bits * weight_message_type + bias_message_type;
-        input_data.write(seq_num + 4, result_msg_type_16bits);
-
-        //处理inter-arrival_time(8)
-        bit<16> result_inter_arrival_time_16bits = 0;
-        result_inter_arrival_time_16bits[7:0] = hdr.ptp.log_message_interval;
-        result_inter_arrival_time_16bits = result_inter_arrival_time_16bits * weight_inter_arrival_time + bias_inter_arrival_time;
-        input_data.write(seq_num + 5, result_inter_arrival_time_16bits);
+        input_data.write(seq_num, hdr.feature.feature_0);
+        input_data.write(seq_num + 1, hdr.feature.feature_1);
+        input_data.write(seq_num + 2, hdr.feature.feature_2);
+        input_data.write(seq_num + 3, hdr.feature.feature_3);
+        input_data.write(seq_num + 4, hdr.feature.feature_4);
+        input_data.write(seq_num + 5, hdr.feature.feature_5);
     }
 
     // 丢弃
@@ -430,7 +396,7 @@ control MyComputeChecksum(inout headers hdr, inout metadata meta) {
 control MyDeparser(packet_out packet, in headers hdr) {
     apply {
         packet.emit(hdr.ethernet);
-        packet.emit(hdr.ptp);
+        packet.emit(hdr.feature);
         packet.emit(hdr.p4calc);
         packet.emit(hdr.s0_output0_calc);
         packet.emit(hdr.s1_output0_calc);
