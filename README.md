@@ -5,7 +5,7 @@
 
 ## 安装与运行
 ### 环境配置
-配置p4的开发环境，系统选择ubuntu20.4，具体配置步骤见我的另一个仓库[p4环境配置](https://github.com/carry3688/p4_environment/blob/main/README.md)
+配置p4的开发环境，系统选择ubuntu20.4，具体配置步骤见我的另一个[p4环境配置](https://github.com/carry3688/p4_environment/blob/main/README.md)仓库。
 
 ### 运行项目
 
@@ -36,6 +36,9 @@ mininet> h1 python3 sendall.py
 #### 4. 分析结果
 
 实验结束，查看`log`和`pcap`文件夹的实验结果。
+
+### 实验测试
+本实验测试了量化策略对于部署在数据面上的模型的准确度的影响，具体使用到的一些模型参数以及数据集详见我的另一个[整合仓库](https://github.com/carry3688/transformer8_integration)
 
 
 ### 其他说明
